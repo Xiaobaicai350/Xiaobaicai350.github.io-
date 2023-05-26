@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <title data-vue-meta="true">又拍云 - 加速在线业务</title>
+    <meta data-vue-meta="true" name="keywords" content="CDN,云分发,云存储,SSL证书服务,HTTPS,短视频SDK,直播SDK,云服务" id="kw"><meta data-vue-meta="true" name="description" content="国内知名企业级云服务商，在全球拥有 1100 多个自建CDN节点，10TB 保有带宽，为25万用户提供CDN、云存储、HTTPS／SSL证书、云处理、短视频SDK、直播SDK等服务。" id="desc">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui">
+    <meta name="applicable-device" content="pc,mobile">
+    <meta name="renderer" content="webkit">
+    <meta name="referrer" content="unsafe-url">
+    <link rel="icon" type="image/png" href="/static/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/static/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/static/favicon-64x64.png" sizes="64x64">
+  <link rel="preload" href="/static/js/manifest.bdbb2cf8106537c89209.js" as="script"><link rel="preload" href="/static/js/vendor.b3fb09386be0d516e03a.js" as="script"><link rel="preload" href="/static/js/sw.fb22e714495e4960ee08.js" as="script"><link rel="preload" href="/static/js/app.862fad10001af2809acb.js" as="script"><link rel="preload" href="/static/css/app.6752b335678eb084c16107b096dfa925.css" as="style"><link rel="preload" href="/static/js/40.60fc89e5101c541f4ca2.js" as="script"><link rel="prefetch" href="/static/js/0.0c4e4fa6d21322cee781.js"><link rel="prefetch" href="/static/js/1.f117f6ba412d4fb4bbce.js"><link rel="prefetch" href="/static/js/2.4274700d4b0839855e49.js"><link rel="prefetch" href="/static/js/3.06af3c19400b2cfa2027.js"><link rel="prefetch" href="/static/js/4.3c0a75438538f6f60050.js"><link rel="prefetch" href="/static/js/5.408af12a39c763f0b9a8.js"><link rel="prefetch" href="/static/js/6.b6cbfc240063327e9700.js"><link rel="prefetch" href="/static/js/7.43f8c997ffd92966f5c7.js"><link rel="prefetch" href="/static/js/8.fa1ecf0961a5448048a4.js"><link rel="prefetch" href="/static/js/9.1d0d460d5acefa5c2fb7.js"><link rel="prefetch" href="/static/js/10.de3010d41b4da3e2fe06.js"><link rel="prefetch" href="/static/js/11.9592e2f033939d966d72.js"><link rel="prefetch" href="/static/js/12.85c0a6da04ad6b8f438a.js"><link rel="prefetch" href="/static/js/13.23187d67cfe97022b094.js"><link rel="prefetch" href="/static/js/14.b1377689ab202ea7d522.js"><link rel="prefetch" href="/static/js/15.c5655dfb817695f33388.js"><link rel="prefetch" href="/static/js/16.b84cbfe3c4ba1c490ff1.js"><link rel="prefetch" href="/static/js/17.7811db951f49249177ea.js"><link rel="prefetch" href="/static/js/18.49bcc48f1503b1c490ee.js"><link rel="prefetch" href="/static/js/19.9ca76c7e2cd3d2aac1bd.js"><link rel="prefetch" href="/static/js/20.fd225e5528b5e6edcbd4.js"><link rel="prefetch" href="/static/js/21.a3fd1e9105c7e06e4703.js"><link rel="prefetch" href="/static/js/22.6df6cd4fbe957c3cf058.js"><link rel="prefetch" href="/static/js/23.43b58bfec5bd94b09774.js"><link rel="prefetch" href="/static/js/24.8b72742cc5dcf06db75f.js"><link rel="prefetch" href="/static/js/25.26e8ca02b71f429a31a1.js"><link rel="prefetch" href="/static/js/26.51a7ee18d5634b6cbd11.js"><link rel="prefetch" href="/static/js/27.16152a6c96015715cf0d.js"><link rel="prefetch" href="/static/js/28.68107857940b5d4cf615.js"><link rel="prefetch" href="/static/js/29.fecfc0f9572dbebb9ffc.js"><link rel="prefetch" href="/static/js/30.30544e6f8ecb86a6a6e0.js"><link rel="prefetch" href="/static/js/31.97d1d18c91aac9016668.js"><link rel="prefetch" href="/static/js/32.4c206ddfb98ff16a096c.js"><link rel="prefetch" href="/static/js/33.964592e51ebca09815e0.js"><link rel="prefetch" href="/static/js/34.bf993cfa636328786ce1.js"><link rel="prefetch" href="/static/js/35.738e4cf52b03311383d8.js"><link rel="prefetch" href="/static/js/36.dc124eba9beba0672902.js"><link rel="prefetch" href="/static/js/37.df02db262fb2a3083332.js"><link rel="prefetch" href="/static/js/38.49e4bcf7dbb12e291f6c.js"><link rel="prefetch" href="/static/js/39.50d51ea5d6b98d682050.js"><link rel="stylesheet" href="/static/css/app.6752b335678eb084c16107b096dfa925.css"><style data-vue-ssr-id="36849614:0">.wrapper[data-v-6d4c05c0]{margin-top:150px;text-align:center}.wrapper h1[data-v-6d4c05c0]{margin-bottom:18px;font-size:40px;line-height:1.1em}.wrapper p[data-v-6d4c05c0]{margin-top:18px;margin-bottom:18px;font-size:18px;line-height:1.1em}.wrapper .up_button.to-home[data-v-6d4c05c0]{display:inline-block;width:122px;height:42px;line-height:42px;color:#2ec0ec;border:1px solid #2ec0ec;border-radius:6px;font-size:18px;text-align:center;transition:background .2s linear;font-weight:400;cursor:pointer;text-decoration:none}.wrapper .up_button.to-home[data-v-6d4c05c0]:hover{background:rgba(45,191,235,.25)}</style></head>
+  <body>
+    <!-- 诸葛 IO -->
+    <script type = "text/javascript">
+      (function() {
+        if (window.zhuge) return;
+        window.zhuge = [];
+        window.zhuge.methods = "_init identify track trackRevenue getDid getSid getKey setSuperProperty setUserProperties setWxProperties setPlatform".split(" ");
+        window.zhuge.factory = function(b) {
+          return function() {
+            var a = Array.prototype.slice.call(arguments);
+            a.unshift(b);
+            window.zhuge.push(a);
+            return window.zhuge;
+          }
+        };
+        for (var i = 0; i < window.zhuge.methods.length; i++) {
+          var key = window.zhuge.methods[i];
+          window.zhuge[key] = window.zhuge.factory(key);
+        }
+        window.zhuge.load = function(b, x) {
+          if (!document.getElementById("zhuge-js")) {
+            var a = document.createElement("script");
+            var verDate = new Date();
+            var verStr = verDate.getFullYear().toString() + verDate.getMonth().toString() + verDate.getDate().toString();
+
+            a.type = "text/javascript";
+            a.id = "zhuge-js";
+            a.async = !0;
+            a.src = 'https://zgsdk.zhugeio.com/zhuge.min.js?v=' + verStr;
+            a.onerror = function() {
+              window.zhuge.identify = window.zhuge.track = function(ename, props, callback) {
+                if(callback && Object.prototype.toString.call(callback) === '[object Function]') {
+                  callback();
+                } else if (Object.prototype.toString.call(props) === '[object Function]') {
+                  props();
+                }
+              };
+            };
+            var c = document.getElementsByTagName("script")[0];
+            c.parentNode.insertBefore(a, c);
+            window.zhuge._init(b, x)
+          }
+        };
+        window.zhuge.load('ecc4e43232c6415fb5022f4c7369ae5e', {
+          superProperty: {
+            '应用名称': 'UPYUN 官网'
+          },
+          visualizer: true,
+          autoTrack: true,
+          singlePage: true //是否是单页面应用（SPA），启用autoTrack后生效（选填，默认false）
+        });
+    })();
+    </script>
+    <!-- end -->
+    <!-- Google Tag Manager -->
+    <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-TPXM6V" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({
+          'gtm.start': new Date().getTime(), event: 'gtm.js'
+        });
+        var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = '//www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-TPXM6V');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <div id="app" data-server-rendered="true"><div class="wrapper" data-v-6d4c05c0><h1 data-v-6d4c05c0>404</h1><p data-v-6d4c05c0>您访问的页面不存在</p><a href="/" class="up_button to-home major router-link-active" data-v-6d4c05c0>回到首页</a><p data-v-6d4c05c0>2 S 后自动返回首页</p></div></div><script src="/static/js/manifest.bdbb2cf8106537c89209.js" defer></script><script src="/static/js/40.60fc89e5101c541f4ca2.js" defer></script><script src="/static/js/vendor.b3fb09386be0d516e03a.js" defer></script><script src="/static/js/sw.fb22e714495e4960ee08.js" defer></script><script src="/static/js/app.862fad10001af2809acb.js" defer></script>
+
+    <!-- 百度统计 -->
+    <script src="//hm.baidu.com/hm.js?09e47f90c12c9a15516512c0d87f6791"></script>
+    <script>
+      // 百度自动推送代码
+      (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (window.location.host !== 'localhost:8000') { // 判断如果不是localhost  进行百度代码统计
+          if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+          }
+          else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+          }
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(bp, s);
+        }
+        })();
+      </script>
+  </body>
+</html>
