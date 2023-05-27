@@ -1,7 +1,7 @@
 ---
 title: JavaScript
 date: 2023-05-19 18:16:52
-tags:
+tags: 前端
 ---
 
 # JavaScript 基础 - 第1天
