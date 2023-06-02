@@ -1413,3 +1413,496 @@ next 函数是实现多个中间件连续调用的关键，它表示把流转关
 不使用 app.use() 定义的中间件，叫做局部生效的中间件，示例代码如下：
 
 ![image-20230602151112977](../pic/image-20230602151112977.png)
+
+#### 7. 定义多个局部中间件
+
+可以在路由中，通过如下两种等价的方式，使用多个局部中间件：![image-20230602151306171](../pic/image-20230602151306171.png)
+
+#### 8. 了解中间件的5个使用注意事项
+
+1. 一定要在路由之前注册中间件
+2. 客户端发送过来的请求，可以连续调用多个中间件进行处理
+3. 执行完中间件的业务代码之后，不要忘记调用 next() 函数
+4. 为了防止代码逻辑混乱，调用 next() 函数后不要再写额外的代码
+5. 连续调用多个中间件时，多个中间件之间，共享 req 和 res 对象
+
+### 3.3 中间件的分类
+
+为了方便大家理解和记忆中间件的使用，Express 官方把常见的中间件用法，分成了 5 大类，分别是：
+
+1.  应用级别的中间件
+2.  路由级别的中间件
+3.  错误级别的中间件
+4.  Express 内置的中间件
+5.  第三方的中间件
+
+#### 1. 应用级别的中间件
+
+通过 app.use() 或 app.get() 或 app.post() ，绑定到 app 实例上的中间件，叫做应用级别的中间件，代码示例如下：
+
+![image-20230602151400966](../pic/image-20230602151400966.png)
+
+#### 2. 路由级别的中间件
+
+绑定到 express.Router() 实例上的中间件，叫做路由级别的中间件。它的用法和应用级别中间件没有任何区别。只不过，应用级别中间件是绑定到 app 实例上，路由级别中间件绑定到 router 实例上，代码示例如下：
+
+![image-20230602151415606](../pic/image-20230602151415606.png)
+
+#### 3. 错误级别的中间件
+
+错误级别中间件的作用：专门用来捕获整个项目中发生的异常错误，从而防止项目异常崩溃的问题。
+
+格式：错误级别中间件的 function 处理函数中，必须有 4 个形参，形参顺序从前到后，分别是 (err, req, res, next)。
+
+![image-20230602151428942](../pic/image-20230602151428942.png)
+
+```js
+// 导入 express 模块
+const express = require('express')
+// 创建 express 的服务器实例
+const app = express()
+
+// 1. 定义路由
+app.get('/', (req, res) => {
+  // 1.1 人为的制造错误
+  throw new Error('服务器内部发生了错误！')
+  res.send('Home page.')
+})
+
+// 2. 定义错误级别的中间件，捕获整个项目的异常错误，从而防止程序的崩溃
+app.use((err, req, res, next) => {
+  console.log('发生了错误！' + err.message)
+  res.send('Error：' + err.message)
+})
+
+// 调用 app.listen 方法，指定端口号并启动web服务器
+app.listen(80, function () {
+  console.log('Express server running at http://127.0.0.1')
+})
+```
+
+注意：错误级别的中间件，必须注册在所有路由之后！
+
+#### 4. Express内置的中间件
+
+自 Express 4.16.0 版本开始，Express 内置了 3 个常用的中间件，极大的提高了 Express 项目的开发效率和体验：
+
+1.  express.static 快速托管静态资源的内置中间件，例如： HTML 文件、图片、CSS 样式等（无兼容性）
+2.  express.json 解析 JSON 格式的请求体数据（有兼容性，仅在 4.16.0+ 版本中可用）
+3.  express.urlencoded 解析 URL-encoded 格式的请求体数据（有兼容性，仅在 4.16.0+ 版本中可用）
+
+![image-20230602151548637](../pic/image-20230602151548637.png)
+
+![image-20230602152320487](../pic/image-20230602152320487.png)![image-20230602152227961](../pic/image-20230602152227961.png)
+
+```js
+// 导入 express 模块
+const express = require('express')
+// 创建 express 的服务器实例
+const app = express()
+
+// 注意：除了错误级别的中间件，其他的中间件，必须在路由之前进行配置
+// 通过 express.json() 这个中间件，解析表单中的 JSON 格式的数据
+app.use(express.json())
+// 通过 express.urlencoded() 这个中间件，来解析 表单中的 url-encoded 格式的数据
+app.use(express.urlencoded({ extended: false }))
+
+app.post('/user', (req, res) => {
+  // 在服务器，可以使用 req.body 这个属性，来接收客户端发送过来的请求体数据
+  // 默认情况下，如果不配置解析表单数据的中间件，则 req.body 默认等于 undefined
+  console.log(req.body)
+  res.send('ok')
+})
+
+app.post('/book', (req, res) => {
+  // 在服务器端，可以通过 req,body 来获取 JSON 格式的表单数据和 url-encoded 格式的数据
+  console.log(req.body)
+  res.send('ok')
+})
+
+// 调用 app.listen 方法，指定端口号并启动web服务器
+app.listen(80, function () {
+  console.log('Express server running at http://127.0.0.1')
+})
+```
+
+#### 5. 第三方的中间件
+
+非 Express 官方内置的，而是由第三方开发出来的中间件，叫做第三方中间件。在项目中，大家可以按需下载并配置第三方中间件，从而提高项目的开发效率。
+
+例如：在 express@4.16.0 之前的版本中，经常使用 body-parser 这个第三方中间件，来解析请求体数据。使用步骤如下：
+
+1. 运行 npm install body-parser 安装中间件
+2. 使用 require 导入中间件
+3. 调用 app.use() 注册并使用中间件
+
+
+
+注意：Express 内置的 express.urlencoded 中间件，就是基于 body-parser 这个第三方中间件进一步封装出来的。
+
+这样发送数据
+
+```js
+// 导入 express 模块
+const express = require('express')
+// 创建 express 的服务器实例
+const app = express()
+
+// 1. 导入解析表单数据的中间件 body-parser
+const parser = require('body-parser')
+// 2. 使用 app.use() 注册中间件
+app.use(parser.urlencoded({ extended: false }))
+// app.use(express.urlencoded({ extended: false }))//这个是express内置的，是基于上面的封装的
+
+app.post('/user', (req, res) => {
+  // 如果没有配置任何解析表单数据的中间件，则 req.body 默认等于 undefined
+  console.log(req.body)
+  res.send('ok')
+})
+
+// 调用 app.listen 方法，指定端口号并启动web服务器
+app.listen(80, function () {
+  console.log('Express server running at http://127.0.0.1')
+})
+```
+
+### 3.4 自定义中间件
+
+#### 1. 需求描述与实现步骤
+
+自己手动模拟一个类似于 express.urlencoded 这样的中间件，来解析 POST 提交到服务器的表单数据。
+
+实现步骤：
+
+1. 定义中间件
+2. 监听 req 的 data 事件
+3. 监听 req 的 end 事件
+4. 使用 querystring 模块解析请求体数据
+5. 将解析出来的数据对象挂载为 req.body
+6. 将自定义中间件封装为模块
+
+#### 2. 定义中间件
+
+使用 app.use() 来定义全局生效的中间件，代码如下：
+
+![image-20230602152633916](../pic/image-20230602152633916.png)
+
+#### 3. 监听 req 的 data 事件
+
+在中间件中，需要监听 req 对象的 data 事件，来获取客户端发送到服务器的数据。
+
+如果数据量比较大，无法一次性发送完毕，则客户端会把数据切割后，分批发送到服务器。所以 data 事件可能会触发多次，每一次触发 data 事件时，获取到数据只是完整数据的一部分，需要手动对接收到的数据进行拼接。
+
+![image-20230602152653345](../pic/image-20230602152653345.png)
+
+#### 4. 监听 req 的 end 事件
+
+当请求体数据接收完毕之后，会自动触发 req 的 end 事件。
+
+因此，我们可以在 req 的 end 事件中，拿到并处理完整的请求体数据。示例代码如下：
+
+![image-20230602152900144](../pic/image-20230602152900144.png)
+
+#### 5. 使用 querystring 模块解析请求体数据
+
+Node.js 内置了一个 querystring 模块，专门用来处理查询字符串。通过这个模块提供的 parse() 函数，可以轻松把查询字符串，解析成对象的格式。示例代码如下：
+
+![image-20230602152927689](../pic/image-20230602152927689.png)
+
+#### 6. 将解析出来的数据对象挂载为 req.body
+
+上游的中间件和下游的中间件及路由之间，共享同一份 req 和 res。因此，我们可以将解析出来的数据，挂载为 req 的自定义属性，命名为 req.body，供下游使用。示例代码如下：
+
+![image-20230602152938807](../pic/image-20230602152938807.png)
+
+```js
+// 导入 express 模块
+const express = require('express')
+// 创建 express 的服务器实例
+const app = express()
+// 导入 Node.js 内置的 querystring 模块
+const qs = require('querystring')
+
+// 这是解析表单数据的中间件
+app.use((req, res, next) => {
+  // 定义中间件具体的业务逻辑
+  // 1. 定义一个 str 字符串，专门用来存储客户端发送过来的请求体数据
+  let str = ''
+  // 2. 监听 req 的 data 事件
+  req.on('data', (chunk) => {
+    str += chunk
+  })
+  // 3. 监听 req 的 end 事件
+  req.on('end', () => {
+    // 在 str 中存放的是完整的请求体数据
+    // console.log(str)
+    // TODO: 把字符串格式的请求体数据，解析成对象格式
+    const body = qs.parse(str)
+    req.body = body
+    next()
+  })
+})
+
+app.post('/user', (req, res) => {
+  res.send(req.body)
+})
+
+// 调用 app.listen 方法，指定端口号并启动web服务器
+app.listen(80, function () {
+  console.log('Express server running at http://127.0.0.1')
+})
+
+```
+
+#### 7. 将自定义中间件封装为模块
+
+为了优化代码的结构，我们可以把自定义的中间件函数，封装为独立的模块，示例代码如下：
+
+![image-20230602152949464](../pic/image-20230602152949464.png)
+
+
+
+```js
+// 导入 express 模块
+const express = require('express')
+// 创建 express 的服务器实例
+const app = express()
+
+// 1. 导入自己封装的中间件模块
+const customBodyParser = require('./14.custom-body-parser')
+// 2. 将自定义的中间件函数，注册为全局可用的中间件
+app.use(customBodyParser)
+
+app.post('/user', (req, res) => {
+  res.send(req.body)
+})
+
+// 调用 app.listen 方法，指定端口号并启动web服务器
+app.listen(80, function () {
+  console.log('Express server running at http://127.0.0.1')
+})
+```
+
+14.custom-body-parser.js
+
+```js
+// 导入 Node.js 内置的 querystring 模块
+const qs = require('querystring')
+
+const bodyParser = (req, res, next) => {
+  // 定义中间件具体的业务逻辑
+  // 1. 定义一个 str 字符串，专门用来存储客户端发送过来的请求体数据
+  let str = ''
+  // 2. 监听 req 的 data 事件
+  req.on('data', (chunk) => {
+    str += chunk
+  })
+  // 3. 监听 req 的 end 事件
+  req.on('end', () => {
+    // 在 str 中存放的是完整的请求体数据
+    // console.log(str)
+    // TODO: 把字符串格式的请求体数据，解析成对象格式
+    const body = qs.parse(str)
+    req.body = body
+    next()
+  })
+}
+module.exports = bodyParser
+```
+
+## 4. 使用 Express 写接口
+
+### 4.1 创建基本的服务器
+
+![image-20230602153157165](../pic/image-20230602153157165.png)
+
+### 4.2 创建 API 路由模块
+
+![image-20230602153226314](../pic/image-20230602153226314.png)
+
+### 4.3 编写 GET 接口
+
+![image-20230602153250760](../pic/image-20230602153250760.png)
+
+### 4.4 编写 POST 接口
+
+![image-20230602153310135](../pic/image-20230602153310135.png)
+
+注意：如果要获取 URL-encoded 格式的请求体数据，必须配置中间件 app.use(express.urlencoded({ extended: false }))
+
+### 4.5 CORS 跨域资源共享
+
+#### 1. 接口的跨域问题
+
+刚才编写的 GET 和 POST接口，存在一个很严重的问题：不支持跨域请求。
+
+解决接口跨域问题的方案主要有两种：
+
+1.  CORS（主流的解决方案，推荐使用）
+2.  JSONP（有缺陷的解决方案：只支持 GET 请求）
+
+#### 2. 使用 cors 中间件解决跨域问题
+
+cors 是 Express 的一个第三方中间件。通过安装和配置 cors 中间件，可以很方便地解决跨域问题。
+
+使用步骤分为如下 3 步：
+
+1. 运行 npm install cors 安装中间件
+2. 使用 const cors = require('cors') 导入中间件
+3. 在路由之前调用 app.use(cors()) 配置中间件
+
+#### 3. 什么是 CORS
+
+CORS （Cross-Origin Resource Sharing，跨域资源共享）由一系列 HTTP 响应头组成，这些 HTTP 响应头决定浏览器是否阻止前端 JS 代码跨域获取资源。
+
+浏览器的同源安全策略默认会阻止网页“跨域”获取资源。但如果接口服务器配置了 CORS 相关的 HTTP 响应头，就可以解除浏览器端的跨域访问限制。
+
+![image-20230602153422389](../pic/image-20230602153422389.png)![image-20230602153426034](../pic/image-20230602153426034.png)
+
+#### 4. CORS 的注意事项
+
+CORS 主要在服务器端进行配置。客户端浏览器无须做任何额外的配置，即可请求开启了 CORS 的接口。
+
+CORS 在浏览器中有兼容性。只有支持 XMLHttpRequest Level2 的浏览器，才能正常访问开启了 CORS 的服务端接口（例如：IE10+、Chrome4+、FireFox3.5+）。
+
+#### 5. CORS 响应头部 - Access-Control-Allow-Origin 
+
+响应头部中可以携带一个 Access-Control-Allow-Origin 字段，其语法如下:
+
+![image-20230602155107590](../pic/image-20230602155107590.png)
+
+其中，origin 参数的值指定了允许访问该资源的外域 URL。
+
+例如，下面的字段值将只允许来自 http://itcast.cn 的请求：
+
+![image-20230602155117801](../pic/image-20230602155117801.png)
+
+如果指定了 Access-Control-Allow-Origin 字段的值为通配符 *，表示允许来自任何域的请求，示例代码如下：
+
+![image-20230602155146961](../pic/image-20230602155146961.png)
+
+#### 6. CORS 响应头部 - Access-Control-Allow-Headers
+
+默认情况下，CORS 仅支持客户端向服务器发送如下的 9 个请求头：
+
+Accept、Accept-Language、Content-Language、DPR、Downlink、Save-Data、Viewport-Width、Width 、Content-Type （值仅限于 text/plain、multipart/form-data、application/x-www-form-urlencoded 三者之一）
+
+如果客户端向服务器发送了额外的请求头信息，则需要在服务器端，通过 Access-Control-Allow-Headers 对额外的请求头进行声明，否则这次请求会失败！
+
+![image-20230602155204815](../pic/image-20230602155204815.png)
+
+#### 7. CORS 响应头部 - Access-Control-Allow-Methods
+
+默认情况下，CORS 仅支持客户端发起 GET、POST、HEAD 请求。
+
+如果客户端希望通过 PUT、DELETE 等方式请求服务器的资源，则需要在服务器端，通过 Access-Control-Alow-Methods来指明实际请求所允许使用的 HTTP 方法。
+
+示例代码如下：
+
+![image-20230602155238368](../pic/image-20230602155238368.png)
+
+#### 8. CORS请求的分类
+
+客户端在请求 CORS 接口时，根据请求方式和请求头的不同，可以将 CORS 的请求分为两大类，分别是：
+
+1. 简单请求
+2. 预检请求
+
+#### 9. 简单请求
+
+同时满足以下两大条件的请求，就属于简单请求：
+
+1.  请求方式：GET、POST、HEAD 三者之一
+2.  HTTP 头部信息不超过以下几种字段：无自定义头部字段、Accept、Accept-Language、Content-Language、DPR、Downlink、Save-Data、Viewport-Width、Width 、Content-Type（只有三个值application/x-www-form-urlencoded、multipart/form-data、text/plain）
+
+#### 10. 预检请求
+
+只要符合以下任何一个条件的请求，都需要进行预检请求：
+
+1.  请求方式为 GET、POST、HEAD 之外的请求 Method 类型
+2.  请求头中包含自定义头部字段
+3.  向服务器发送了 application/json 格式的数据
+
+
+
+在浏览器与服务器正式通信之前，浏览器会先发送 OPTION 请求进行预检，以获知服务器是否允许该实际请求，所以这一次的 OPTION 请求称为“预检请求”。服务器成功响应预检请求后，才会发送真正的请求，并且携带真实数据。
+
+![image-20230602155558035](../pic/image-20230602155558035.png)
+
+#### 11. 简单请求和预检请求的区别
+
+简单请求的特点：客户端与服务器之间只会发生一次请求。
+
+预检请求的特点：客户端与服务器之间会发生两次请求，OPTION 预检请求成功之后，才会发起真正的请求。
+
+### 4.6 JSONP 接口
+
+#### 1. 回顾 JSONP 的概念与特点
+
+概念：浏览器端通过 `<script> `标签的 src 属性，请求服务器上的数据，同时，服务器返回一个函数的调用。这种请求数据的方式叫做 JSONP。
+
+特点：
+
+1. JSONP 不属于真正的 Ajax 请求，因为它没有使用 XMLHttpRequest 这个对象。
+2. JSONP 仅支持 GET 请求，不支持 POST、PUT、DELETE 等请求。
+
+#### 2. 创建 JSONP 接口的注意事项
+
+如果项目中已经配置了 CORS 跨域资源共享，为了防止冲突，必须在配置 CORS 中间件之前声明 JSONP 的接口。否则 JSONP 接口会被处理成开启了 CORS 的接口。示例代码如下：
+
+![image-20230602155712177](../pic/image-20230602155712177.png)
+
+#### 3. 实现 JSONP 接口的步骤
+
+1. 获取客户端发送过来的回调函数的名字
+2. 得到要通过 JSONP 形式发送给客户端的数据
+3. 根据前两步得到的数据，拼接出一个函数调用的字符串
+4. 把上一步拼接得到的字符串，响应给客户端的` <script> `标签进行解析执行
+
+#### 4. 实现 JSONP 接口的具体代码
+
+![image-20230602155737023](../pic/image-20230602155737023.png)
+
+#### 5. 在网页中使用 jQuery 发起 JSONP 请求
+
+调用 $.ajax() 函数，提供 JSONP 的配置选项，从而发起 JSONP 请求，示例代码如下：
+
+![image-20230602155754514](../pic/image-20230602155754514.png)
+
+```js
+// 导入 express
+const express = require('express')
+// 创建服务器实例
+const app = express()
+
+// 配置解析表单数据的中间件
+app.use(express.urlencoded({ extended: false }))
+
+// 必须在配置 cors 中间件之前，配置 JSONP 的接口
+app.get('/api/jsonp', (req, res) => {
+  // TODO: 定义 JSONP 接口具体的实现过程
+  // 1. 得到函数的名称
+  const funcName = req.query.callback
+  // 2. 定义要发送到客户端的数据对象
+  const data = { name: 'zs', age: 22 }
+  // 3. 拼接出一个函数的调用
+  const scriptStr = `${funcName}(${JSON.stringify(data)})`
+  // 4. 把拼接的字符串，响应给客户端
+  res.send(scriptStr)
+})
+
+// 一定要在路由之前，配置 cors 这个中间件，从而解决接口跨域的问题
+const cors = require('cors')
+app.use(cors())
+
+// 导入路由模块
+const router = require('./16.apiRouter')
+// 把路由模块，注册到 app 上
+app.use('/api', router)
+
+// 启动服务器
+app.listen(80, () => {
+  console.log('express server running at http://127.0.0.1')
+})
+```
+
