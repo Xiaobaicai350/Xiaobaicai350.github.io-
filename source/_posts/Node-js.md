@@ -2296,15 +2296,15 @@ jwt.sign(参数1，参数2，参数3)
 
 # 大事件项目
 
-目录结构：
-
-![image-20230602213239380](../pic/image-20230602213239380.png)
-
 ## Headline
 
 > 大事件后台 API 项目，API 接口文档请参考 https://www.showdoc.cc/escook?page_id=3707158761215217
 
 ## 1. 初始化
+
+目录结构
+
+![image-20230602213239380](../pic/image-20230602213239380.png)
 
 ### 1.1 创建项目
 
@@ -2745,7 +2745,7 @@ db.query(sql, userinfo.username, function (err, results) {
 
 > 核心实现思路：调用 `bcrypt.compareSync(用户提交的密码, 数据库中的密码)` 方法比较密码是否一致
 
-> 返回值是布尔值（true 一致、false 不一致）
+> 返回值是布尔值（true 一致、false 不一致） 
 
 具体的实现代码如下：
 
@@ -2768,7 +2768,7 @@ if (!compareResult) {
 1. 通过 ES6 的高级语法，快速剔除 `密码` 和 `头像` 的值：
 
 ```js
-// 剔除完毕之后，user 中只保留了用户的 id, username, nickname, email 这四个属性的值
+// 剔除完毕之后，user 中只保留了用户的 id, username, nickname, email 这四个属性的值（这里的剔除，就是赋值为空，但是我觉得完全没有必要欸，直接要用哪个字段就取哪个字段不就得了）
 const user = { ...results[0], password: '', user_pic: '' }
 ```
 
@@ -3720,7 +3720,7 @@ db.query(sql, [req.body, req.body.Id], (err, results) => {
 
 ### 5.1 新建 ev_articles 表
 
-![ev_articles表结构](../../../A%25E5%25AE%2598%25E6%2596%25B9%25E7%25AC%2594%25E8%25AE%25B0/%25E9%25BB%2591%25E9%25A9%25AC%25E5%2589%258D%25E7%25AB%25AF/node.js%25E2%2580%2594%25E8%25B5%2584%25E6%2596%2599/day7/day7/ppt/images/4.jpg)
+![image-20230603154813760](../pic/image-20230603154813760.png)
 
 ### 5.2 发布新文章
 
@@ -3938,4 +3938,3 @@ db.query(sql, articleInfo, (err, results) => {
 // 托管静态资源文件
 app.use('/uploads', express.static('./uploads'))
 ```
-
