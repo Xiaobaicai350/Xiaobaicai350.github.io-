@@ -1469,6 +1469,417 @@ key 的注意事项
 
 具体的迁移指南，请参考vue 3.x 的官方文档给出的说明：https://v3.vuejs.org/guide/migration/filters.html#migration-strategy
 
+
+
+### watch 侦听器
+
+#### 什么是 watch 侦听器
+
+侦听器watch 侦听器允许开发者监视数据的变化，从而针对数据的变化做特定的操作。语法格式如下：
+
+![image-20230604213907766](../pic/image-20230604213907766.png)
+
+举例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <input type="text" v-model="username">
+  </div>
+  <script src="./lib/vue-2.6.12.js"></script>
+  <script>
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        username: 'admin'
+      },
+      // 所有的侦听器，都应该被定义到 watch 节点下
+      watch: {
+        // 侦听器本质上是一个函数，要监视哪个数据的变化，就把数据名作为方法名即可
+        // 新值在前，旧值在后
+        username(newVal,oldVal) {
+          console.log("检测到了数值的变化");
+          console.log(`output->newVal`,newVal)
+          console.log(`output->oldVal`,oldVal)    
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
+```
+
+实现效果：
+
+![动画](../pic/%E5%8A%A8%E7%94%BB-1685886067279110.gif)
+
+#### 监听器的应用场景
+
+可以用来检测用户名是否被占用，每一次修改都发送一次axios请求去看用户名是否被占用。
+
+#### immediate 选项
+
+默认情况下，组件在初次加载完毕后不会调用 watch 侦听器。如果想让 watch 侦听器立即被调用，则需要使用 immediate 选项。示例代码如下：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <input type="text" v-model="username">
+  </div>
+
+  <script src="./lib/vue-2.6.12.js"></script>
+  <script src="./lib/jquery-v3.6.0.js"></script>
+
+  <script>
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        username: 'admin'
+      },
+      // 所有的侦听器，都应该被定义到 watch 节点下
+      watch: {
+        // 定义对象格式的侦听器
+        username: {
+          // 侦听器的处理函数
+          handler(newVal, oldVal) {
+            console.log(newVal, oldVal)
+          },
+          // immediate 选项的默认值是 false
+          // immediate 的作用是：控制侦听器是否自动触发一次！
+          // 如果为真，则说明是进入浏览器默认触发一次handler
+          immediate: true
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
+```
+
+#### deep 选项
+
+如果 watch 侦听的是一个对象，如果对象中的属性值发生了变化，则无法被监听到。此时需要使用 deep 选项，代码示例如下：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <input type="text" v-model="info.username">
+    <input type="text" v-model="info.address.city">
+  </div>
+
+  <script src="./lib/vue-2.6.12.js"></script>
+  <script src="./lib/jquery-v3.6.0.js"></script>
+
+  <script>
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        // 用户的信息对象
+        info: {
+          username: 'admin',
+          address: {
+            city: '北京'
+          }
+        }
+      },
+      // 所有的侦听器，都应该被定义到 watch 节点下
+      watch: {
+        info: {
+          handler(newVal) {
+            console.log(newVal)
+          },
+          // 开启深度监听，只要对象中任何一个属性变化了，都会触发“对象的侦听器”
+          deep: true
+        },
+      }
+    })
+  </script>
+</body>
+</html>
+```
+
+#### 监听对象单个属性的变化
+
+如果只想监听对象中单个属性的变化，则可以按照如下的方式定义 watch 侦听器：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <input type="text" v-model="info.username">
+    <input type="text" v-model="info.address.city">
+  </div>
+
+  <script src="./lib/vue-2.6.12.js"></script>
+  <script src="./lib/jquery-v3.6.0.js"></script>
+
+  <script>
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        // 用户的信息对象
+        info: {
+          username: 'admin',
+          address: {
+            city: '北京'
+          }
+        }
+      },
+      watch: {
+        // 如果要侦听的是对象的子属性（只监听这一个的）的变化，则必须包裹一层单引号
+        // 这里只监听了info对象的username属性
+        'info.username'(newVal) {
+          console.log(newVal)
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
+```
+
+
+
+#### 对象监听器和方法监听器的区别
+
+1. 方法格式的侦听器
+   + 缺点1：无法在刚进入页面的时候，自动触发！！！
+   + 缺点2：如果侦听的是一个对象，如果对象中的属性发生了变化，不会触发侦听器！！！
+   + 好处1：定义简单，使用简单。。。
+2. 对象格式的侦听器
+   + 好处1：可以通过 **immediate** 选项，让侦听器自动触发！！！
+   + 好处2：可以通过 **deep** 选项，让侦听器深度监听对象中每个属性的变化！！！
+
+### 计算属性
+
+#### 什么是计算属性
+
+计算属性指的是通过一系列运算之后，最终得到一个属性值。
+
+这个动态计算出来的属性值可以被模板结构或methods 方法使用。
+
+计算属性也是属性，计算属性的返回值也会成为data的一部分，不过和data又有一些不一样，下面的computed方法里面的就是计算属性，计算属性会以：方法名为key,返回值为value挂载到Vue对象(vm)身上。访问这个属性也是通过this.方法名，就可以访问到这个属性了，这个就是计算属性。
+
+示例代码如下：
+
+![image-20230604222130917](../pic/image-20230604222130917.png)
+
+
+
+#### 代码案例
+
+案例代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./lib/vue-2.6.12.js"></script>
+  <style>
+    .box {
+      width: 200px;
+      height: 200px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div>
+      <span>R：</span>
+      <input type="text" v-model.number="r">
+    </div>
+    <div>
+      <span>G：</span>
+      <input type="text" v-model.number="g">
+    </div>
+    <div>
+      <span>B：</span>
+      <input type="text" v-model.number="b">
+    </div>
+    <hr>
+
+    <!-- 专门用户呈现颜色的 div 盒子 -->
+    <!-- 在属性身上，: 代表  v-bind: 属性绑定 -->
+    <!-- 这里的style里面写的是一个js对象，里面是backgroundColor为key，后面的为值 -->
+    <div class="box" :style="{ backgroundColor: `rgb(${r}, ${g}, ${b})` }">
+      <!-- 这里面写的是js表达式，也就是说可以用js的语法 -->
+      {{ `rgb(${r}, ${g}, ${b})` }}
+    </div>
+    <button @click="show">按钮</button>
+  </div>
+
+  <script>
+    // 创建 Vue 实例，得到 ViewModel
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        // 红色
+        r: 0,
+        // 绿色
+        g: 0,
+        // 蓝色
+        b: 0
+      },
+      methods: {
+        // 点击按钮，在终端显示最新的颜色
+        show() {
+          console.log(`rgb(${this.r}, ${this.g}, ${this.b})`)
+        }
+      },
+    });
+  </script>
+</body>
+
+</html>
+```
+
+实现效果：
+
+![动画](../pic/%E5%8A%A8%E7%94%BB-1685888450312112.gif)
+
+需求：使用计算属性改造案例，不改变原有的效果。
+
+改造后的代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./lib/vue-2.6.12.js"></script>
+  <style>
+    .box {
+      width: 200px;
+      height: 200px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div>
+      <span>R：</span>
+      <input type="text" v-model.number="r">
+    </div>
+    <div>
+      <span>G：</span>
+      <input type="text" v-model.number="g">
+    </div>
+    <div>
+      <span>B：</span>
+      <input type="text" v-model.number="b">
+    </div>
+    <hr>
+
+    <!-- 专门用户呈现颜色的 div 盒子 -->
+    <!-- 在属性身上，: 代表  v-bind: 属性绑定 -->
+    <!-- :style 代表动态绑定一个样式对象，它的值是一个 {  } 样式对象 -->
+    <!-- 当前的样式对象中，只包含 backgroundColor 背景颜色 -->
+    <div class="box" :style="{ backgroundColor: rgb }">
+      {{ rgb }}
+    </div>
+    <button @click="show">按钮</button>
+  </div>
+
+  <script>
+    // 创建 Vue 实例，得到 ViewModel
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        // 红色
+        r: 0,
+        // 绿色
+        g: 0,
+        // 蓝色
+        b: 0
+      },
+      methods: {
+        // 点击按钮，在终端显示最新的颜色
+        show() {
+          console.log(this.rgb)
+        }
+      },
+      // 所有的计算属性，都要定义到 computed 节点之下
+      // 计算属性在定义的时候，要定义成“方法格式”
+      computed: {
+        // rgb 作为一个计算属性，被定义成了方法格式，
+        // 最终，在这个方法中，要返回一个生成好的 rgb(x,x,x) 的字符串
+        
+        // 这个返回的字符串，会默认的成为Vue对象身上的一个属性  
+        // 比如说你方法名为rgb 返回值为rgb(0,0,0) 那Vue对象就会有一个属性叫rgb，值为rgb(0,0,0)
+        rgb() {
+          return `rgb(${this.r}, ${this.g}, ${this.b})`
+        }
+      }
+    });
+
+    console.log(vm)
+  </script>
+</body>
+
+</html>
+```
+
+#### 计算属性的特点
+
+①  虽然计算属性在声明的时候被定义为方法，但是计算属性的本质是一个属性
+
+②  计算属性会缓存计算的结果，只有计算属性依赖的数据变化时，才会重新进行运算
+
 ## 组件
 
 组件（Component）是 Vue.js 最强大的功能之一。
