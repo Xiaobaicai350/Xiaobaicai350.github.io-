@@ -471,9 +471,9 @@ source-map。实际效果如图所示：
 
 ![image-20230603215044781](../pic/image-20230603215044781.png)
 
-# vue 基础入门
+# Vue2
 
-## Vue2
+## vue2 基础入门
 
 ### Vue的特性
 
@@ -687,7 +687,7 @@ Vue会管理el选项 **命中的元素**及其**内部的后代元素**
 
 ![image-20220507132349381](../pic/image-20220507132349381-16617872850372.png)
 
-### vue 的指令与过滤器
+### vue 的指令
 
 #### 指令的概念
 
@@ -1312,80 +1312,162 @@ key 的注意事项
 ④	使用 index 的值当作 key 的值没有任何意义（因为 index 的值不具有唯一性）
 ⑤	建议使用v-for 指令时一定要指定key 的值（既提升性能、又防止列表状态紊乱）
 
-## 计数器案例
+### 过滤器
 
-### 思路
+#### 过滤器的使用
 
-1. data中定义数据:比如num
-2. methods中添加两个方法:比如add(递增),sub(递减)
-3. 使用v-text将num设置给span标签
-4. 使用v-on将add,sub分别绑定给+,按钮
-5. 累加的逻辑:小于10累加,否则提示
-6. 递减的逻辑:大于0递减否则提示
+过滤器（Filters）是 vue 为开发者提供的功能，常用于文本的格式化。过滤器可以用在两个地方：插值表达式和 v-bind 属性绑定。
 
-#### 总结
+过滤器应该被添加在 JavaScript 表达式的尾部，由“管道符”进行调用，示例代码如下：
 
-1. 创建Vue示例时:el(挂载点),data(数据),methods(方法);
-2. v-on指令的作用是绑定事件,简写为@；
-3. 方法中通过this,关键字获取data中的数据；
-4. v-text指令的作用是:设置元素的文本值简写为`{{}}`;
-5. v-html指令的作用是:设置元素的innerHTML;
+下面的capitalize和formatId都是需要我们自定义的函数，至于格式，往下看
+
+![image-20230604210211122](../pic/image-20230604210211122.png)
+
+示例代码:
 
 ```html
-<body>
-       <!-- 2.html结构 -->
-    <div id="app">
-       <!-- 计数器功能区 -->
-       <div class="input-num">
-            <button @click="sub">-</button>
-            <span>{{num}}</span>
-            <button @click="add">+</button>
-       </div>
-    </div>
-     <!-- 1.开发环境版本，包含了有帮助的命令行警告 -->
-     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-     <!-- 编码 -->
-     <!-- 3.创建Vue实例 -->
-     <script>
-         var app=new Vue({
-             el:"#app",
-             data:{
-               num:1
-             },
-             methods:{
-                 add:function(){
-                    //  console.log("add");
-                    if(this.num<10){
-                        this.num++;
-                    }else{
-                        alert("超过10啦");
-                    }
-                 },
-                 sub:function(){
-                    //  console.log("sub");
-                    if(this.num>0){
-                        this.num--;
-                    }else{
-                        alert("到底啦");
-                    }
-                 }
-             }
-         })
-     </script>
-</body>
+<!DOCTYPE html>
+<html lang="en">
 
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
 
+    <body>
+        <div id="app">
+            <p>message 的值是：{{ message | capi }}</p>
+        </div>
+        <script src="./lib/vue-2.6.12.js"></script>
+        <script>
+            const vm = new Vue({
+                el: '#app',
+                data: {
+                    message: 'hello vue.js'
+                },
+                // 过滤器函数，必须被定义到 filters 节点之下
+                // 过滤器本质上是函数
+                filters: {
+                    // 注意：过滤器函数形参中的 val，永远都是“管道符”前面的那个值
+                    //这个函数的作用是把首字母变为大写
+                    capi(val) {
+                        // 字符串有 charAt 方法，这个方法接收索引值，表示从字符串中把索引对应的字符，获取出来
+                        // val.charAt(0)
+                        const first = val.charAt(0).toUpperCase()
+                        // 字符串的 slice 方法，可以截取字符串，从指定索引往后截取
+                        const other = val.slice(1)
+                        // 强调：过滤器中，一定要有一个返回值
+                        return first + other
+                    }
+                }
+            })
+        </script>
+    </body>
+
+</html>
 ```
 
-![image-20220507142553830](../pic/image-20220507142553830-166178728503711.png)
+
+
+![image-20230604210142081](../pic/image-20230604210142081.png)
+
+#### 私有过滤器和全局过滤器
+
+在 filters 节点下定义的过滤器，也就是上面我们自己定义的过滤器，称为“私有过滤器”，因为它只能在当前vm 实例所控制的el 区域内使用。如果希望在多个vue 实例之间共享过滤器，则可以按照如下的格式定义全局过滤器：
+
+![image-20230604211240514](../pic/image-20230604211240514.png)
+
+示例代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <p>message 的值是：{{ message | capi }}</p>
+  </div>
+
+  <div id="app2">
+    <p>message 的值是：{{ message | capi }}</p>
+  </div>
+
+  <script src="./lib/vue-2.6.12.js"></script>
+  <script>
+    // 使用 Vue.filter() 定义全局过滤器
+    //如果全局过滤器和私有过滤器名字一致，此时就按照就近原则，调用的是私有过滤器
+    Vue.filter('capi', function (str) {
+      const first = str.charAt(0).toUpperCase()
+      const other = str.slice(1)
+      return first + other + '~~~'
+    })
+
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        message: 'hello vue.js'
+      },
+      filters: {
+        capi(val) {
+          const first = val.charAt(0).toUpperCase()
+          const other = val.slice(1)
+          return first + other
+        }
+      }
+    })
+
+    // ----------------------------------
+
+    // 第二个vue示例，这里没有配置过滤器
+    const vm2 = new Vue({
+      el: '#app2',
+      data: {
+        message: 'Haohao'
+      }
+    })
+  </script>
+</body>
+
+</html>
+```
+
+运行效果：第一个调用了私有过滤器，第二个调用了全局过滤器
+
+![image-20230604211343879](../pic/image-20230604211343879.png)
+
+#### 连续调用多个过滤器
+
+过滤器可以串联地进行调用，例如：
+
+![image-20230604212006257](../pic/image-20230604212006257.png)
+
+#### 过滤器传参
+
+过滤器的本质是 JavaScript 函数，因此可以接收参数，格式如下：
+
+![image-20230604212021632](../pic/image-20230604212021632.png)
+
+#### 过滤器的兼容性
+
+过滤器仅在vue 2.x 和 1.x 中受支持，在vue 3.x 的版本中剔除了过滤器相关的功能。在企业级项目开发中：
+
+如果使用的是 2.x 版本的 vue，则依然可以使用过滤器相关的功能
+
+如果项目已经升级到了 3.x 版本的vue，官方建议使用计算属性或方法代替被剔除的过滤器功能
 
 
 
-
-
-
-
-
+具体的迁移指南，请参考vue 3.x 的官方文档给出的说明：https://v3.vuejs.org/guide/migration/filters.html#migration-strategy
 
 ## 组件
 
