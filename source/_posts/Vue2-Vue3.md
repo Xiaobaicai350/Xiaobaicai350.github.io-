@@ -727,7 +727,7 @@ vue 中的指令按照不同的用途可以分为如下 6 大类：
 
 1.v-text指令的作用：设置标签的内容（textContent）
 
-2.默认写法会替换全部内容，使用差值表达式{undefined{}}可以替换指定内容
+2.默认写法会替换全部内容，使用差值表达式`{{}}`可以替换指定内容,(也就是说，不管你标签里面写了啥，都会覆盖标签中原有的内容)所以说这种写法基本上都不使用。
 
 3.内部支持写表达式（如字符串拼接）
 
@@ -743,6 +743,16 @@ vue 中的指令按照不同的用途可以分为如下 6 大类：
 
 ![image-20220507134526994](../pic/image-20220507134526994-16617872850376.png)
 
+##### 插值表达式
+
+```
+vue 提供的 `{{ }} `语法，专门用来解决v-text 会覆盖默认文本内容的问题。这种 {{ }} 语法的专业名称是插值表达式（英文名为：Mustache）。
+```
+
+![image-20230604194313484](../pic/image-20230604194313484.png)
+
+注意：相对于v-text 指令来说，插值表达式在开发中更常用一些！因为它不会覆盖元素中默认的文本内容。
+
 ##### v-html指令
 
 1. v-html指令的作用是:设置元素的innerHTML
@@ -753,11 +763,95 @@ vue 中的指令按照不同的用途可以分为如下 6 大类：
 
 4. 解析文本使用v-text
 
-需要解析html结构使用v-html
+5. 需要解析html结构使用v-html
 
 ![image-20220507135026542](../pic/image-20220507135026542-16617872850377.png)
 
-### 本地应用-v-on指令基础
+#### 属性绑定指令
+
+如果需要为元素的属性动态绑定属性值，则需要用到v-bind 属性绑定指令。用法示例如下：
+
+##### v-bind指令
+
+![image-20220507150348228](../pic/image-20220507150348228-166178728503713.png)
+
+可以直接省略v-bind
+
+![image-20220507150414642](../pic/image-20220507150414642-166178728503714.png)
+
+1.v-bind：属性名=表达式
+
+2.v-bind指令的作用是:为元素绑定属性
+
+3.完整写法是v-bind:属性名
+
+4.简写的话可以直接省略v-bind,只保留:属性名
+
+5.需要动态的增删class建议使用对象的方式
+
+![image-20220507151024623](../pic/image-20220507151024623-166178728503715.png)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            .active{
+                border: 2px solid red;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <img v-bind:src="imgSrc" :title="imgTitle+'!!!'">
+            <!-- <br>         ？   ：  如果 是   就怎么 -->
+            <img :src="imgSrc" :title="imgTitle+'显示'" :class="isActive?'active':''" @click="toggleActive">
+            <img :src="imgSrc" :title="imgTitle+'显示'" :class="{active:isActive}" @click="toggleActive">
+            <!-- 点击变色                         active取值依赖于isactive是否取值 -->
+        </div>
+        <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script>
+            var app=new Vue({
+                el:"#app",
+                data:{
+                    imgSrc:"https://img0.baidu.com/it/u=2753883117,2936626650&fm=26&fmt=auto",
+                    imgTitle:"壁纸",
+                    isActive:false
+                },
+                methods:{
+                    toggleActive:function(){
+                        this.isActive=!this.isActive;
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
+
+```
+
+
+
+![image-20230604195146360](../pic/image-20230604195146360.png)
+
+在使用v-bind属性绑定期间，如果绑定内容需要进行动态的字符串拼接，则字符串的外面应该包括单引号，后面可以拼接一个变量，这个变量要去data里面去找
+
+
+
+#### 事件绑定指令
+
+vue 提供了v-on 事件绑定指令，用来辅助程序员为 DOM 元素绑定事件监听。语法格式如下：
+
+注意：原生 DOM 对象有onclick、oninput、onkeyup 等原生事件，替换为vue 的事件绑定形式后，分别为：v-on:click、v-on:input、v-on:keyup
+
+##### v-on指令
+
+示例代码：
 
 ![image-20220507135252977](../pic/image-20220507135252977-16617872850378.png)
 
@@ -765,25 +859,60 @@ vue 中的指令按照不同的用途可以分为如下 6 大类：
 
  ![image-20220507135708630](../pic/image-20220507135708630-16617872850379.png)
 
-1.v-on指令的作用是:为元素绑定事件(点击，移入....)
+1. v-on指令的作用是:为元素绑定事件(点击，移入....)
 
-2.事件名不需要写on
+2. 事件名不需要写on
 
-3.指令可以简写为@
+3. 指令可以简写为@
 
-4.绑定的方法定义在methods属性中
+4. 绑定的方法定义在methods属性中
 
-5.方法内部通过this关键字可以访问定义在data中数据
+5. 方法内部通过this关键字可以访问定义在data中数据
 
 ![image-20220507141616701](../pic/image-20220507141616701-166178728503710.png)
 
-### 修饰符
+##### 事件参数对象
+
+在原生的 DOM 事件绑定中，可以在事件处理函数的形参处，接收事件参数对象 event。（但是，仅限于没有传参的函数，如果传参了，这个e就不会传进来了）同理，在v-on 指令（简写为@ ）所绑定的事件处理函数中，同样可以接收到事件参数对象event，（这个e对象就是触发事件对象，比如点击事件对象，e.target就是事件源，也就是那个触发事件的dom元素，这里是button按钮）示例代码如下：
+
+![image-20230604195919897](../pic/image-20230604195919897.png)
+
+##### 绑定事件并传参
+
+在使用v-on 指令绑定事件时，可以使用 ( ) 进行传参，示例代码如下：
+
+![image-20230604200031078](../pic/image-20230604200031078.png)
+
+##### $event
+
+$event 是 vue 提供的特殊变量，用来表示原生的事件参数对象event。$event 可以解决事件参数对象event被覆盖的问题。示例用法如下：
+
+![image-20230604200045419](../pic/image-20230604200045419.png)
+
+##### 事件修饰符
+
+在原生的JavaScript中，事件处理函数中调用event.preventDefault() 或 event.stopPropagation() 是非常常见的需求。因此，
+vue 提供了事件修饰符的概念，来辅助程序员更方便的对事件的触发进行控制。常用的 5 个事件修饰符如下：
+
+| 事件修饰符 | 说明                                                      |
+| ---------- | --------------------------------------------------------- |
+| .prevent   | 阻止默认行为（例如：阻止 a 连接的跳转、阻止表单的提交等） |
+| .stop      | 阻止事件冒泡                                              |
+| .capture   | 以捕获模式触发当前的事件处理函数                          |
+| .once      | 绑定的事件只触发1次                                       |
+| .self      | 只有在 event.target 是当前元素自身时触发事件处理函数      |
 
 修饰符 (Modifiers) 是以半角句号（.）指明的特殊后缀，用于指出一个指令应该以特殊方式绑定。
 
-例如       .prevent 修饰符告诉 v-on 指令对于触发的事件调用 event.preventDefault()：
+> 例如  :   
+>
+>   .prevent 修饰符告诉 v-on 指令对于触发的事件调用 event.preventDefault(),即阻止事件原本的默认行为
 
-即阻止事件原本的默认行为
+语法格式如下：
+
+![image-20230604200227161](../pic/image-20230604200227161.png)
+
+阻止默认行为然后触发onLinkClick函数，这个函数是我们自己定义的。。。
 
 ```html
 <!DOCTYPE html>
@@ -798,10 +927,10 @@ vue 中的指令按照不同的用途可以分为如下 6 大类：
 
     <body>
         <div id="app">
-
+			<!--阻止表单的默认提交行为，然后触发onSubmit函数-->
             <form action="localhost:8080/save" v-on:submit.prevent="onSubmit">
-                <input type="text" id="name" v-model="user.username" ></input>
-            <button type="submit">保存</button>
+                <input type="text" id="name" v-model="user.username" />
+            	<button type="submit">保存</button>
             </form>
         </div>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -829,9 +958,361 @@ vue 中的指令按照不同的用途可以分为如下 6 大类：
 </html>
 ```
 
-上面的代码是，提交表单，不提交到指定地址，相应的，触发onSubmit()方法
+按下按钮后，阻止表单提交到指定地址，并且，触发onSubmit()方法
 
-## 计数器
+##### 按键修饰符
+
+在监听键盘事件时，我们经常需要判断详细的按键。此时，可以为键盘相关的事件添加按键修饰符，例如：
+
+![image-20230604200427738](../pic/image-20230604200427738.png)
+
+submit 和clearInput这两个函数都是我们两个自己定义的
+
+**模板**
+
+![image-20220507160511834](../pic/image-20220507160511834-166178728503718.png)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+
+        <!-- 2.html结构 -->
+        <div id="app">
+            <input type="button" value="点击" @click="doIt(666,'老铁')">
+            <input type="text" @keyup.enter="sayHi">
+
+        </div>
+        <!-- 1.开发环境版本，包含了有帮助的命令行警告 -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <!-- 3.创建Vue实例 -->
+        <script>
+            var app=new Vue({
+                el:"#app",
+                methods:{
+                    doIt:function(p1,p2){
+                        console.log("做it");
+                        console.log(p1,p2);
+                        alert("吃了没");
+                        alert(p1,p2);
+                    },
+                    sayHi:function(){
+                        alert("吃了没");
+                    }
+                }
+            })
+        </script>
+
+    </body>
+</html>
+
+```
+
+![image-20220507133130871](../pic/image-20220507133130871-166178728503719.png)
+
+#### 双向绑定指令
+
+vue 提供了v-model 双向数据绑定指令，用来辅助开发者在不操作 DOM 的前提下，快速获取表单的数据。
+
+> 只有表单元素才能使用v-model指令，其他标签用它没意义
+>
+> 比如：
+>
+> - input
+> - select
+> - textarea
+
+![image-20230604200539973](../pic/image-20230604200539973.png)
+
+##### v-model
+
+简单来说双向绑定就是指修改文本框中的message，也会改变data中的message。
+
+1. v-model：获取和设置表单元素的值(双向数据绑定)
+
+![image-20220507160729118](../pic/image-20220507160729118-166178728503720.png)
+
+2. v-model指令的作用是：便捷的设置、获取表单元素的值
+
+3. 绑定的数据会和表单元素值相关联
+
+```html
+<!-- 2.html结构 -->
+<div id="app">
+    <input type="text" v-model="message" @keyup.enter="getMessage" />
+    <input type="button" v-model="message" @click="setMessage" />
+    <h3>{{message}}</h3>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 3.创建Vue实例 -->
+<script>
+    var app=new Vue({
+        el:"#app",
+        data:{
+            message:"沙丁鱼"
+        },
+        methods:{
+            getMessage:function(){
+                alert(this.message)
+            },
+            setMessage:function(){
+                this.message="酷丁鱼";
+            }
+        }
+    })
+</script>
+```
+
+![image-20220507133158658](../pic/image-20220507133158658-166178728503721.png)
+
+##### v-model 指令的修饰符
+
+为了方便对用户输入的内容进行处理，vue 为 v-model 指令提供了 3 个修饰符，分别是：
+
+| 修饰符  | 作用                           | 示例                           |
+| ------- | ------------------------------ | ------------------------------ |
+| .number | 自动将用户的输入值转为数值类型 | <input v-model.number="age" /> |
+| .trim   | 自动过滤用户输入的首尾空白字符 | <input v-model.trim="msg" />   |
+| .lazy   | 在“change”时而非“input”时更新  | <input v-model.lazy="msg" />   |
+
+![image-20230604200949908](../pic/image-20230604200949908.png)
+
+#### 条件渲染指令
+
+条件渲染指令用来辅助开发者按需控制 DOM 的显示与隐藏。条件渲染指令有如下两个，分别是：
+
+- v-if
+- v-show
+
+示例用法如下：
+
+下面的networkState也是我们自己定义的一个变量
+
+![image-20230604201041922](../pic/image-20230604201041922.png)
+
+##### v-show指令
+
+1. show指令的作用
+
+根据**真假**进行切换元素的显示
+
+**状态原理**是修改元素的**display**,实现显示隐藏
+
+2. 指令后面的内容,最终都会解析为布尔值 
+
+3. true元素显示，值为false元素隐藏
+
+4. 改变之后，对应元素的显示状态会同步更新
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <input type="button" value="切换显示状态" @click="changeIsShow">
+        <input type="button" value="累加年龄" @click="addAge">
+        <img v-show="isShow" src="./1.jpg">
+        <img v-show="age>=18" src="./1.jpg">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        var app =new Vue({
+            el: "#app",
+            data:{
+                isShow:false,
+                age:17
+            },
+            methods:{
+                changeIsShow:function(){
+                    this.isShow=!this.isShow;
+                },
+                addAge:function(){
+                    this.age++;
+            }
+          }
+        })
+    </script>
+
+</body>
+</html>
+
+```
+
+##### v-if指令
+
+1. v-if指令的作用是:**根据表达式的真假切换元素的显示状态**
+2. 本质是通过操纵dom元素来切换显示状态
+3. 表达式的值为true,把dom元素添加到dom树中。如果值为false,则从dom树中移除
+4. 频繁的切换使用v-show。反之使用v-if，v-show如果多次进行切换消耗的资源小
+
+v-if和v-show的区别：v-show直接修改display ，而v-if是直接抹除dom标签
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <input type="button" value="切换显示" @click="change">
+        <p v-if="true">我是一个p标签</p>
+        <p v-if="isShow">我是一个p标签</p>
+       
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        var app=new Vue({
+            el:"#app",
+            data:{
+                isShow:false
+            },
+            methods:{  
+                change:function(){
+                    this.isShow=!this.isShow;
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+
+```
+
+![image-20220507132907620](../pic/image-20220507132907620-166178728503712.png)
+
+在实际开发中，绝大多数情况，不用考虑性能，直接使用v-if就行了
+
+###### v-else
+
+v-if 可以单独使用，或配合v-else 指令一起使用：
+
+![image-20230604201558550](../pic/image-20230604201558550.png)
+
+注意：v-else 指令必须配合v-if 指令一起使用，否则它将不会被识别！
+
+###### v-else-if
+
+v-else-if 指令，顾名思义，充当v-if 的“else-if 块”，可以连续使用：
+
+![image-20230604201639596](../pic/image-20230604201639596.png)
+
+注意：v-else-if 指令必须配合v-if 指令一起使用，否则它将不会被识别！
+
+这玩意一般都不用。。。
+
+#### 列表渲染指令
+
+vue 提供了v-for 列表渲染指令，用来辅助开发者基于一个数组来循环渲染一个列表结构。v-for 指令需要使用 item in items 形式的特殊语法，其中：
+
+- items 是待循环的数组
+- item 是被循环的每一项
+
+![image-20230604201800144](../pic/image-20230604201800144.png)
+
+##### v-for
+
+![image-20221002194520056](../pic/image-20221002194520056.png)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+
+        <ul>
+            <li v-for="n in 10">{{n}}</li>
+        </ul>
+        <ol>
+            <li v-for="(n,index) in 10">{{n}}----{{index}}</li>
+        </ol>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+遍历表格（其中的user可以随便起名字。改成haohao都行）
+
+![image-20221002195311858](../pic/image-20221002195311858.png)
+
+
+
+![image-20220507155014859](../pic/image-20220507155014859-166178728503716.png)
+
+![image-20220507155620808](../pic/image-20220507155620808-166178728503717.png)
+
+1. v-for指令的作用是:根据数据生成列表结构
+
+2. 数组经常和v-for结合使用
+
+3. 语法是( item,index ) in数据
+
+4. item和index可以结合其他指令- -起使用
+
+5. 数组长度的更新会同步到页面上，是响应式的
+
+###### v-for 中的索引
+
+v-for 指令还支持一个可选的第二个参数，即当前项的索引。语法格式为(item, index) in items，示例代码如下：
+
+![image-20230604202031528](../pic/image-20230604202031528.png)
+
+注意：v-for 指令中的 item 项和 index 索引都是形参，可以根据需要进行重命名。例如(user, i) in userlist
+
+###### 使用 key 维护列表的状态
+
+当列表的数据变化时，默认情况下，vue 会尽可能的复用已存在的 DOM 元素，从而提升渲染的性能。但这种默认的性能优化策略，会导致有状态的列表无法被正确更新。
+
+为了给vue一个提示，以便它能跟踪每个节点的身份，从而在保证有状态的列表被正确更新的前提下，提升渲染的性能。此时，需要为每项提供一个唯一的key 属性。
+
+官方建议：只要用到了v-for指令，那么一定要绑定一个`:key`属性
+
+![image-20230604202130906](../pic/image-20230604202130906.png)
+
+key 的注意事项
+
+①	key 的值只能是字符串或数字类型
+②	key 的值必须具有唯一性（即：key 的值不能重复）
+③	建议把数据项 id（我们data里面的数据中的key） 属性的值作为key 的值（因为 id 属性的值具有唯一性）
+④	使用 index 的值当作 key 的值没有任何意义（因为 index 的值不具有唯一性）
+⑤	建议使用v-for 指令时一定要指定key 的值（既提升性能、又防止列表状态紊乱）
+
+## 计数器案例
 
 ### 思路
 
@@ -900,336 +1381,7 @@ vue 中的指令按照不同的用途可以分为如下 6 大类：
 
 
 
-## 本地应用-v-show指令
 
-1.show指令的作用
-
-根据**真假**   切换元素的显示
-
-**状态原理**是修改元素的**display**,实现显示隐藏
-
-2.指令后面的内容,最终都会解析为布尔值 
-
-3.true元素显示，值为false元素隐藏
-
-4.改变之后，对应元素的显示状态会同步更新
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div id="app">
-        <input type="button" value="切换显示状态" @click="changeIsShow">
-        <input type="button" value="累加年龄" @click="addAge">
-        <img v-show="isShow" src="./1.jpg">
-        <img v-show="age>=18" src="./1.jpg">
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script>
-        var app =new Vue({
-            el: "#app",
-            data:{
-                isShow:false,
-                age:17
-            },
-            methods:{
-                changeIsShow:function(){
-                    this.isShow=!this.isShow;
-                },
-                addAge:function(){
-                    this.age++;
-            }
-          }
-        })
-    </script>
-
-</body>
-</html>
-
-```
-
-## 本地应用-v-if指令
-
-1.v-if指令的作用是:**根据表达式的真假切换元素的显示状态**
-2.本质是通过操纵dom元素来切换显示状态
-3.表达式的值为true,元素存在于dom树中,为false,从dom树中移除
-4.频繁的切换v-show,       反之使用v-if,       前者的切换消耗小
-
-v-if和v-show的区别 v-show直接修改display 而v-if是直接抹除标签
-
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div id="app">
-        <input type="button" value="切换显示" @click="change">
-        <p v-if="true">我是一个p标签</p>
-        <p v-if="isShow">我是一个p标签</p>
-       
-
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script>
-        var app=new Vue({
-            el:"#app",
-            data:{
-                isShow:false
-            },
-            methods:{  
-                change:function(){
-                    this.isShow=!this.isShow;
-                }
-            }
-        })
-    </script>
-</body>
-</html>
-
-```
-
-![image-20220507132907620](../pic/image-20220507132907620-166178728503712.png)
-
-## 本地应用-v-bind指令
-
-![image-20220507150348228](../pic/image-20220507150348228-166178728503713.png)
-
-可以直接省略v-bind
-
-![image-20220507150414642](../pic/image-20220507150414642-166178728503714.png)
-
- 1.v-bind：属性名=表达式
-
-2.v-bind指令的作用是:为元素绑定属性
-
-3.完整写法是v-bind:属性名
-
-4.简写的话可以直接省略v-bind,只保留:属性名
-
-5.需要动态的增删class建议使用对象的方式
-
-![image-20220507151024623](../pic/image-20220507151024623-166178728503715.png)
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        <style>
-            .active{
-                border: 2px solid red;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="app">
-            <img v-bind:src="imgSrc" :title="imgTitle+'!!!'">
-            <!-- <br>         ？   ：  如果 是   就怎么 -->
-            <img :src="imgSrc" :title="imgTitle+'显示'" :class="isActive?'active':''" @click="toggleActive">
-            <img :src="imgSrc" :title="imgTitle+'显示'" :class="{active:isActive}" @click="toggleActive">
-            <!-- 点击变色                         active取值依赖于isactive是否取值 -->
-        </div>
-        <!-- 开发环境版本，包含了有帮助的命令行警告 -->
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-        <script>
-            var app=new Vue({
-                el:"#app",
-                data:{
-                    imgSrc:"https://img0.baidu.com/it/u=2753883117,2936626650&fm=26&fmt=auto",
-                    imgTitle:"壁纸",
-                    isActive:false
-                },
-                methods:{
-                    toggleActive:function(){
-                        this.isActive=!this.isActive;
-                    }
-                }
-            })
-        </script>
-    </body>
-</html>
-
-```
-
-## 本地应用-v-for
-
-![image-20221002194520056](../pic/image-20221002194520056.png)
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-
-<body>
-    <div id="app">
-
-        <ul>
-            <li v-for="n in 10">{{n}}</li>
-        </ul>
-        <ol>
-            <li v-for="(n,index) in 10">{{n}}----{{index}}</li>
-        </ol>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script>
-        new Vue({
-            el: '#app',
-            data: {
-
-            }
-        })
-    </script>
-</body>
-
-</html>
-```
-
-遍历表格（其中的user可以随便起名字。改成haohao都行）
-
-![image-20221002195311858](../pic/image-20221002195311858.png)
-
-
-
-![image-20220507155014859](../pic/image-20220507155014859-166178728503716.png)
-
-![image-20220507155620808](../pic/image-20220507155620808-166178728503717.png)
-
-1.v-for指令的作用是:根据数据生成列表结构
-
-2.数组经常和v-for结合使用
-
-3.语法是( item,index ) in数据
-
-4.item和index可以结合其他指令- -起使用
-
-5.数组长度的更新会同步到页面上，是响应式的
-
-
-
-## 本地应用-v-on补充
-
-1. 事件绑定的方法写成函数调用的形式，可以传入自定义参数
-
-2. 定义方法时需要定义形参来接收传入的实参
-
-3. 事件的后面跟上.修饰符可以对事件进行限制
-
-4. .enter可以限制触发的按键为回车
-5. 事件修饰符有多种：https://cn.vuejs.org/v2/api/#v-on
-
-
-**模板**
-
-![image-20220507160511834](../pic/image-20220507160511834-166178728503718.png)
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-  <!-- 2.html结构 -->
-  <div id="app">
-    <input type="button" value="点击" @click="doIt(666,'老铁')">
-    <input type="text" @keyup.enter="sayHi">
-
- </div>
-  <!-- 1.开发环境版本，包含了有帮助的命令行警告 -->
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <!-- 3.创建Vue实例 -->
-  <script>
-      var app=new Vue({
-          el:"#app",
-          methods:{
-           doIt:function(p1,p2){
-               console.log("做it");
-               console.log(p1,p2);
-               alert("吃了没");
-               alert(p1,p2);
-           },
-           sayHi:function(){
-               alert("吃了没");
-           }
-          }
-      })
-  </script>
-
-</body>
-</html>
-
-```
-
-![image-20220507133130871](../pic/image-20220507133130871-166178728503719.png)
-
-
-
-## 本地应用-v-model
-
-简单来说双向绑定就是指修改文本框中的message，也会改变data中的message。
-
-**1.v-model：获取和设置表单元素的值(双向数据绑定)**
-
-![image-20220507160729118](../pic/image-20220507160729118-166178728503720.png)**2.v-model指令的作用是便捷的设置和获取表单元素的值**
-**3.绑定的数据会和表单元素值相关联**
-**4.绑定的数据←→表单元素的值**
-
-```html
-<!-- 2.html结构 -->
-<div id="app">
-    <input type="text" v-model="message" @keyup.enter="getMessage" />
-    <input type="button" v-model="message" @click="setMessage" />
-    <h3>{{message}}</h3>
-</div>
-<!-- 1.开发环境版本，包含了有帮助的命令行警告 -->
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<!-- 3.创建Vue实例 -->
-<script>
-    var app=new Vue({
-        el:"#app",
-        data:{
-            message:"沙丁鱼"
-        },
-        methods:{
-            getMessage:function(){
-                alert(this.message)
-            },
-            setMessage:function(){
-                this.message="酷丁鱼";
-            }
-        }
-    })
-</script>
-
-
-```
-
-![image-20220507133158658](../pic/image-20220507133158658-166178728503721.png)
 
 
 
