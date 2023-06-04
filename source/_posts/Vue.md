@@ -1601,71 +1601,47 @@ var app=new Vue({
 3. 遮罩层
 4. mv地址设置 
 
-# vue3
+# Vue3
 
 创建项目
-
 vue create vue-demo
-
-![img](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680836039528-8adcc066-b6c4-40cd-b396-25789396c973.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1684717253109-0f231397-5d27-46ea-9b21-e787865d749f.png#averageHue=%231d1b1b&clientId=uafc785c6-cf24-4&from=paste&height=290&id=u067510d7&originHeight=290&originWidth=541&originalType=binary&ratio=1&rotation=0&showTitle=false&size=16931&status=done&style=none&taskId=u4f3f650b-9c81-41c5-93b3-69bbd0c3e0f&title=&width=541)
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680836039528-8adcc066-b6c4-40cd-b396-25789396c973.png#averageHue=%23242322&clientId=ucd5c7621-c96e-4&from=paste&height=361&id=u2b9902ea&originHeight=451&originWidth=464&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=32087&status=done&style=none&taskId=ue26e2b02-45a7-4bc4-843d-d1414735ef6&title=&width=371.2)
 选项
-
 然后安装
-
 运行：
 
 1. 先进入你要的目录 cd vue-demo
 2. npm run serve
 
-或者根据![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680836236976-3c13cace-f0ee-419a-a95a-96101dd4eeb6.png)
-
-
+或者根据![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680836236976-3c13cace-f0ee-419a-a95a-96101dd4eeb6.png#averageHue=%23222120&clientId=ucd5c7621-c96e-4&from=paste&height=93&id=u367fd81e&originHeight=116&originWidth=385&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=4919&status=done&style=none&taskId=u5c22a8a9-717f-4944-8b33-c4a327255e4&title=&width=308)
 
 然后生成这个
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680836326374-208d155d-f49d-4abb-8daa-7761a7b4c375.png)
-
-
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680836326374-208d155d-f49d-4abb-8daa-7761a7b4c375.png#averageHue=%2327282a&clientId=ucd5c7621-c96e-4&from=paste&height=387&id=u17321ee3&originHeight=484&originWidth=303&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=25117&status=done&style=none&taskId=u0ca7969c-5d34-4b1b-b188-411e1ad078f&title=&width=242.4)
 
 
 ## 组件模板
 
-![img](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680837806744-b336898c-bbee-49a7-928a-887d1e61500b.png)
-
+components
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680837806744-b336898c-bbee-49a7-928a-887d1e61500b.png#averageHue=%2390a76f&clientId=ucd5c7621-c96e-4&from=paste&height=491&id=u8d25687d&originHeight=614&originWidth=947&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=50652&status=done&style=none&taskId=u918d01d1-a9d9-489e-9768-0213e3eaefd&title=&width=757.6)
 可以自定义组件
-
 那么如何引入组件呢？
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680838148926-39df8494-c33a-49fb-97d0-aa65e3a2ceeb.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680838148926-39df8494-c33a-49fb-97d0-aa65e3a2ceeb.png#averageHue=%23969e5e&clientId=ucd5c7621-c96e-4&from=paste&height=619&id=u04327dd1&originHeight=774&originWidth=1161&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=113322&status=done&style=none&taskId=u6e96e8fa-18e8-4c2e-9ff7-7366e3207b6&title=&width=928.8)
 这样就可以引入啦
-
 还可以这样写
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680838334825-17b6b003-b295-4551-9780-b704f0199538.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680838334825-17b6b003-b295-4551-9780-b704f0199538.png#averageHue=%23201f1f&clientId=ucd5c7621-c96e-4&from=paste&height=306&id=uc8f950dc&originHeight=383&originWidth=752&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=37412&status=done&style=none&taskId=u8dec4867-7c3e-4fc1-a3ac-2f4b1e31ddc&title=&width=601.6)
 需要注意的是：
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680838376614-43ad75a2-3817-445b-986a-1d3c77559d45.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680838376614-43ad75a2-3817-445b-986a-1d3c77559d45.png#averageHue=%231f1e1e&clientId=ucd5c7621-c96e-4&from=paste&height=106&id=u0303a6d4&originHeight=133&originWidth=651&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=37142&status=done&style=none&taskId=u308b268e-9e19-40f1-97f9-fb0e0f15265&title=&width=520.8)
 组件树！
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680838493397-fa730c44-0464-49fe-ac0c-c0cd65355783.png)
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680838493397-fa730c44-0464-49fe-ac0c-c0cd65355783.png#averageHue=%23ddccc5&clientId=ucd5c7621-c96e-4&from=paste&height=189&id=uff245393&originHeight=236&originWidth=594&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=62550&status=done&style=none&taskId=uc31b1070-e57b-495b-a886-5e00ffe8fa5&title=&width=475.2)
 
 ## Props组件交互
 
 组件交互其实就是组件之间可以进行数据传输，起到一个数据公共的情况
 
-
-
 **实现组件交互**
-
 文件结构：
-
-![img](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680839551334-20faa479-f467-4c81-b63f-7d972f9b8e88.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680839551334-20faa479-f467-4c81-b63f-7d972f9b8e88.png#averageHue=%2328282b&clientId=ucd5c7621-c96e-4&from=paste&height=107&id=u4259b63a&originHeight=134&originWidth=302&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=8903&status=done&style=none&taskId=u9e77f352-5680-4163-8ca2-c02bd35524c&title=&width=241.6)
 代码：
 
 ```vue
@@ -1690,6 +1666,9 @@ export default {
   }
 }
 </script>
+```
+
+```vue
 <template>
     <h1>{{ title }}</h1>
     <h1>{{ age }}</h1>
@@ -1719,13 +1698,11 @@ props:{
 ```
 
 页面效果：
-
-![img](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680839634108-40a10bfc-eac1-462c-b637-46bf31d3a3a6.png)
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680839634108-40a10bfc-eac1-462c-b637-46bf31d3a3a6.png#averageHue=%23fefefe&clientId=ucd5c7621-c96e-4&from=paste&height=738&id=u82de899a&originHeight=923&originWidth=857&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=29887&status=done&style=none&taskId=udfda0a01-1f89-412f-8f4f-5ce09fc301a&title=&width=685.6)
 
 ## 自定义事件的组件交互
 
 自定义事件可以在组件中反向传递数据，`prop`可以将数据从父组件传递到子组件，那么反向如何操作呢?答案是：可以利用自定义事件实现`$emit`
-
 现在是`从工具人向老板传递数据`
 
 ```vue
@@ -1755,6 +1732,9 @@ export default {
   }
 }
 </script>
+```
+
+```vue
 <template>
   <!-- 需要注意的是 sendData是下面的方法，不能加括号-->
     <button @click="sendData">必须要点击才能发送数据</button>
@@ -1779,33 +1759,24 @@ export default{
 ```
 
 效果：
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680844367626-0c538872-0edb-4794-af03-6951427fd1e2.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680844367626-0c538872-0edb-4794-af03-6951427fd1e2.png#averageHue=%23fefdfd&clientId=ucd5c7621-c96e-4&from=paste&height=302&id=u1b1d9192&originHeight=377&originWidth=822&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=18550&status=done&style=none&taskId=u6d8ea738-05d6-49b8-bf63-1745dac99e0&title=&width=657.6)
 点击按钮后
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680844378370-36af3a85-e3de-4990-b7c2-c2f247b6f3db.png)
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680844378370-36af3a85-e3de-4990-b7c2-c2f247b6f3db.png#averageHue=%23fdfdfc&clientId=ucd5c7621-c96e-4&from=paste&height=346&id=uffc5b3dc&originHeight=432&originWidth=531&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=28849&status=done&style=none&taskId=ua12bdb91-1b8a-4256-9e4b-a9cdd113e13&title=&width=424.8)
 
 ## 组件生命周期
 
 每个组件在创建时都要经过一系列的初始化过程，在这个过程中会运行一些叫做**生命周期钩子**的函数，这给了用户在不同阶段添加自己的代码的机会。
-
 一共有八个生命周期钩子函数...之前用到过
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680846189071-f4763043-dde5-4c85-a6a7-29436ebb5eaf.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680846189071-f4763043-dde5-4c85-a6a7-29436ebb5eaf.png#averageHue=%23f9f5f3&clientId=ucd5c7621-c96e-4&from=paste&height=134&id=ud6eec86f&originHeight=168&originWidth=224&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=30669&status=done&style=none&taskId=u6e8fbf30-d9db-4537-9965-80552e841b4&title=&width=179.2)
 网络请求就放到mounted就行了。
 
 ## Vue引入第三方
 
-awesome-vue，一些vue的第三方组件.
+> awesome-vue，一些vue的第三方组件.
 
-https://github.com/vuejs/awesome-vue
-
+[GitHub - vuejs/awesome-vue: 🎉 A curated list of awesome things related to Vue.js](https://github.com/vuejs/awesome-vue)
 **下面介绍swiper**
-
-**安装swiper** `cnpm install --save swiper`
-
+**安装swiper **`cnpm install --save swiper`
 使用
 
 ```vue
@@ -1842,7 +1813,6 @@ export default{
 ## 在Vue中使用axios
 
 首先切换到你的vue项目中安装axios`npm install --save axios`
-
 如果报错试试	`npm install --save axios --location=global`
 
 ### get请求
@@ -1896,7 +1866,7 @@ export default {
 </style>
 ```
 
-效果：![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680848949538-19e218c6-5a7e-4755-889f-c682537ab03a.png)
+效果：![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680848949538-19e218c6-5a7e-4755-889f-c682537ab03a.png#averageHue=%23fefefe&clientId=ucd5c7621-c96e-4&from=paste&height=306&id=ue08f3a1b&originHeight=383&originWidth=1229&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=38533&status=done&style=none&taskId=u931efef2-cd12-4235-882a-0e4e2be5650&title=&width=983.2)
 
 ### Post请求
 
@@ -1954,8 +1924,7 @@ export default {
 ```
 
 得到结果
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680849385274-30b8b977-d861-4915-9c39-6727988a2b90.png)
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680849385274-30b8b977-d861-4915-9c39-6727988a2b90.png#averageHue=%23cbd1ad&clientId=ucd5c7621-c96e-4&from=paste&height=746&id=u79ff1dec&originHeight=933&originWidth=1048&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=84789&status=done&style=none&taskId=u13389b6c-75ae-49e3-a404-2fbb6a8e458&title=&width=838.4)
 
 ### 简化方式
 
@@ -2009,22 +1978,16 @@ export default {
 
 ### 全局引入axios
 
-![img](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680849934170-a507e121-1805-45cb-bb3b-41d202363f34.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680849934170-a507e121-1805-45cb-bb3b-41d202363f34.png#averageHue=%2391a863&clientId=ucd5c7621-c96e-4&from=paste&height=551&id=u1ad39a3b&originHeight=689&originWidth=1000&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=78339&status=done&style=none&taskId=u1ded18e8-1a0f-4bea-9f8c-f4510847b63&title=&width=800)
 之后就可以这样调用了：
-
-![img](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680849960065-4694ea06-ee62-4184-ba2c-08f8d55a6cc1.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680849960065-4694ea06-ee62-4184-ba2c-08f8d55a6cc1.png#averageHue=%2321201f&clientId=ucd5c7621-c96e-4&from=paste&height=275&id=ue87d0fa2&originHeight=344&originWidth=992&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=40543&status=done&style=none&taskId=ufa693265-39af-4ff5-ab14-36450acbef0&title=&width=793.6)
 具体是为啥老师也没讲
 
 ### Axios网络请求封装
 
 把网络请求进行封装，更好找，有利于维护
-
 用到的目录结构
-
-![img](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680852854797-cf53995f-170d-473c-89ff-b04251be023c.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680852854797-cf53995f-170d-473c-89ff-b04251be023c.png#averageHue=%23262728&clientId=ucd5c7621-c96e-4&from=paste&height=380&id=ue268a7eb&originHeight=475&originWidth=331&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=22781&status=done&style=none&taskId=u30e19cca-39ae-411c-a614-9974aae9600&title=&width=264.8)
 代码:
 
 ```javascript
@@ -2070,12 +2033,18 @@ instance1.interceptors.response.use(
 
 //通过 export default 将 instance1 对象导出供其他模块使用。
 export default instance1;
+```
+
+```javascript
 const base={
     baseUrl:"http://iwenwiki.com",
     chengpin:"/api/blueberrypai/getChengpinDetails.php"
 }
 //导出base
 export default base;
+```
+
+```javascript
 import axios from "../utils/request"
 import path from "./path"
 const api={
@@ -2084,6 +2053,9 @@ const api={
    } 
 }
 export default api;
+```
+
+```vue
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
 </template>
@@ -2117,27 +2089,29 @@ export default {
 </style>
 ```
 
-结果：![img](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680852946189-494614ad-835b-4537-8c0e-7f0845529517.png)
+结果：![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680852946189-494614ad-835b-4537-8c0e-7f0845529517.png#averageHue=%236099b0&clientId=ucd5c7621-c96e-4&from=paste&height=116&id=uf2117d97&originHeight=145&originWidth=1748&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=24883&status=done&style=none&taskId=ud66fb18e-4565-4206-9ad9-4534df9f377&title=&width=1398.4)
 
 ## 路由
 
 通过路由的方式**管理页面之间的关系**
-
 **Vue Router是Vue的官方路由！**
-
 安装路由！`cnpm install --save vue-router`
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680854953537-aebb8038-01fa-4ca3-a78d-4c6dad88f718.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680854953537-aebb8038-01fa-4ca3-a78d-4c6dad88f718.png#averageHue=%23262628&clientId=ucd5c7621-c96e-4&from=paste&height=418&id=u03eb3bd3&originHeight=522&originWidth=312&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=32216&status=done&style=none&taskId=uf22e3405-a6e8-466e-9b3e-704d2398f34&title=&width=249.6)
 其中不用新创建的是App.vue和main.js
 
 ```vue
 <template>
     <h1>首页</h1>
 </template>
+```
+
+```vue
 <template>
     <h1>about页面</h1>
 </template>
+```
+
+```javascript
 import {createRouter,createWebHashHistory} from 'vue-router'
 import HomeView from "../views/HomeView"
 import AboutView from "../views/AboutView"
@@ -2162,6 +2136,9 @@ const router=createRouter({
 })
 //导出
 export default router;
+```
+
+```javascript
 import { createApp } from 'vue'
 import App from './App.vue'
 import './registerServiceWorker'
@@ -2177,6 +2154,9 @@ const app=createApp(App)
 app.use(router)
 app.config.globalProperties.$axios=axios
 app.mount('#app')
+```
+
+```vue
 <template>
   <router-link to="/">首页</router-link>
   <br/>
@@ -2197,15 +2177,12 @@ export default {
 ```
 
 需要注意的是：
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1680855218202-a862fefe-213b-475c-9fee-e4093743d2bd.png)
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680855218202-a862fefe-213b-475c-9fee-e4093743d2bd.png#averageHue=%231f1f1f&clientId=ucd5c7621-c96e-4&from=paste&height=284&id=u22c61436&originHeight=355&originWidth=449&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=92990&status=done&style=none&taskId=u139b7646-4c7a-4c71-8205-94604a40905&title=&width=359.2)
 
 ## 路由传递参数
 
 目录结构：
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1681097373867-6ad019e8-9959-4ec5-a020-7c392461449f.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681097373867-6ad019e8-9959-4ec5-a020-7c392461449f.png#averageHue=%234a8495&clientId=u42739be6-37cf-4&from=paste&height=487&id=u9a1efcf5&originHeight=609&originWidth=416&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=35699&status=done&style=none&taskId=u464aecc6-858b-4e84-b074-deae9abd3b6&title=&width=332.8)
 代码实现：
 
 ```javascript
@@ -2224,6 +2201,9 @@ const router=createRouter({
 })
 //导出
 export default router;
+```
+
+```vue
 <!-- 第二步：在跳转过程中携带参数 -->
 <template>
     <li><router-link to="/list/网易新闻">网易新闻</router-link></li>
@@ -2240,6 +2220,9 @@ export default router;
 export default {
 }
 </script>
+```
+
+```vue
 <!-- 第三步：在详情页中获取数据 -->
 <template>
     <h1>{{ $route.params.name }}</h1>
@@ -2247,18 +2230,14 @@ export default {
 ```
 
 效果：
-
-![img](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681097508140-fcd07bc7-e8ae-423d-8b26-864ae0d74d87.png)
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681097508140-fcd07bc7-e8ae-423d-8b26-864ae0d74d87.png#averageHue=%23f4f3f3&clientId=u42739be6-37cf-4&from=paste&height=209&id=u7362454a&originHeight=261&originWidth=323&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=9380&status=done&style=none&taskId=u3b6ebd6b-19f8-4581-8ce7-02fbf691687&title=&width=258.4)
 
 ## 嵌套路由配置
 
 嵌套路由就是这玩意：
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1681097580912-2c8730e8-e7a0-480b-973d-938807d67f18.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681097580912-2c8730e8-e7a0-480b-973d-938807d67f18.png#averageHue=%23fbfbf9&clientId=u42739be6-37cf-4&from=paste&height=418&id=u53fbcb61&originHeight=522&originWidth=981&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=204692&status=done&style=none&taskId=ud58fcf2f-7ff1-485d-b8fe-65af17b954c&title=&width=784.8)
 目录结构：
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1681099034436-57863ead-71b7-4517-9757-cbeb04009cd5.png)
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681099034436-57863ead-71b7-4517-9757-cbeb04009cd5.png#averageHue=%2325282b&clientId=u42739be6-37cf-4&from=paste&height=566&id=u64b16ff2&originHeight=707&originWidth=377&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=37672&status=done&style=none&taskId=u6a012028-a35c-4dea-a752-7d9f072bba9&title=&width=301.6)
 
 ```vue
 <template>
@@ -2270,11 +2249,17 @@ export default {
 export default {
 }
 </script>
+```
+
+```vue
 <template>
     <router-link to="/list/news1">news1</router-link>|
     <router-link to="/list/news2">news2</router-link>
     <router-view></router-view>
 </template>
+```
+
+```javascript
 import {createRouter,createWebHashHistory} from 'vue-router'
 const routes=[ 
     {
@@ -2303,36 +2288,33 @@ const router=createRouter({
 })
 //导出
 export default router;
+```
+
+```vue
 <template>
     <h1>news1</h1>
 </template>
+```
+
+```vue
 <template>
     <h1>news2</h1>
 </template>
 ```
 
 页面效果：
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1681099274256-20de1f4d-3ce1-411b-b93b-8c6431d2a607.png)
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681099274256-20de1f4d-3ce1-411b-b93b-8c6431d2a607.png#averageHue=%23d2bb90&clientId=u42739be6-37cf-4&from=paste&height=258&id=u1c83fdd9&originHeight=323&originWidth=792&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=15286&status=done&style=none&taskId=uecd71b4c-1598-47fa-8d33-775cca4e3e4&title=&width=633.6)
 
 ## Vue状态管理（Vuex）
 
-状态管理可以理解成：为了更方便的管理组件之间的数据交互，提供了一个**集中式**的管理方案，任何组件都可以按照指定的方式进行读取和改变数据![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1681105090616-767adafd-28d2-4774-a425-74873ef012ec.png)
-
-
-
+状态管理可以理解成：为了更方便的管理组件之间的数据交互，提供了一个**集中式**的管理方案，任何组件都可以按照指定的方式进行读取和改变数据![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681105090616-767adafd-28d2-4774-a425-74873ef012ec.png#averageHue=%23f1e9e7&clientId=u42739be6-37cf-4&from=paste&height=122&id=u235d6e02&originHeight=152&originWidth=179&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=27836&status=done&style=none&taskId=ua9f01e8b-2297-48dc-84c2-5e596e9bb5b&title=&width=143.2)
 
 
 项目结构：
-
-![img](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1681108481969-c214bf30-eb61-4ba8-afed-489c84179f4c.png)
-
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681108481969-c214bf30-eb61-4ba8-afed-489c84179f4c.png#averageHue=%23272829&clientId=u42739be6-37cf-4&from=paste&height=332&id=ue9b3d5b1&originHeight=415&originWidth=326&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=19748&status=done&style=none&taskId=u897c8753-2edf-45f1-ab17-54a8d96fad0&title=&width=260.8)
 **第一步：**
-
 安装vuex `npm install --save vuex`
-
 **第二步：**
-
 创建store目录，并且创建一个地方存放所有数据
 
 ```javascript
@@ -2348,7 +2330,6 @@ export default store;
 ```
 
 **第三步：**
-
 在main.js中引入vuex
 
 ```javascript
@@ -2366,9 +2347,7 @@ app.mount('#app')
 ```
 
 **第四步：**
-
 在主页面获取数据
-
 方法一：
 
 ```vue
@@ -2468,6 +2447,9 @@ const store =createStore({
 
 
 export default store;
+```
+
+```vue
 <template>
       <button @click="addClickHandler">+10</button>
 </template>
@@ -2576,4 +2558,30 @@ export default {
   }
 }
 </script>
+```
+
+## 引入Element-UI
+
+第一步：安装依赖`npm i element-ui -S`	`npm install element-plus --save`
+
+### 完整引用
+
+这种方式的特点就是文件大小会比较大
+在main.js中引入：
+
+```javascript
+import Vue from 'vue'
+import App from './App.vue'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
+
+Vue.config.productionTip = false
+
+
+const app=new Vue({
+  render: h => h(App)
+})
+app.use(ElementPlus)
+app.$mount('#app')
 ```
