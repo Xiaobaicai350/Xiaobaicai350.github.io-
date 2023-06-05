@@ -1698,8 +1698,8 @@ axios 也提供了类似于 jQuery 中 $.ajax() 的函数，语法如下：
  axios({
      method: '请求类型',
      url: '请求的URL地址',
-     data: { /* POST数据 */ },
-     params: { /* GET参数 */ }
+     data: { /* POST数据，请求体中的数据 */ },
+     params: { /* GET参数，url中的查询参数 */ }
  }) .then(callback)
 ```
 
@@ -1733,6 +1733,100 @@ axios({
     console.log(res.data)
 })
 ```
+
+### 6.5 使用await简化
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <button id="btnPost">发起POST请求</button>
+  <button id="btnGet">发起GET请求</button>
+
+  <script src="./lib/axios.js"></script>
+  <script>
+    document.querySelector('#btnPost').addEventListener('click', async function () {
+      // 如果调用某个方法的返回值是 Promise 实例，则前面可以添加 await！
+      // await 只能用在被 async “修饰”的方法中
+      const res = await axios({
+        method: 'POST',
+        url: 'http://www.liulongbin.top:3006/api/post',
+        data: {
+          name: 'zs',
+          age: 20
+        }
+      })
+
+      //这个res就是我们之前得到的.then(res)里面的对象，这两个是一样的，只是不一种写法而已
+      console.log(res)
+    })
+
+  </script>
+</body>
+
+</html>
+```
+
+还可以进行结构赋值
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <button id="btnPost">发起POST请求</button>
+  <script src="./lib/axios.js"></script>
+  <script>
+    document.querySelector('#btnPost').addEventListener('click', async function () {
+      //进行结构赋值
+      const { data } = await axios({
+        method: 'POST',
+        url: 'http://www.liulongbin.top:3006/api/post',
+        data: {
+          name: 'zs',
+          age: 20
+        }
+      })
+
+      console.log(data)
+    })
+    //结构赋值并改
+    document.querySelector('#btnGet').addEventListener('click', async function () {
+      // 解构赋值的时候，使用 : 进行重命名
+      // 1. 调用 axios 之后，使用 async/await 进行简化
+      // 2. 使用解构赋值，从 axios 封装的大对象中，把 data 属性解构出来
+      // 3. 把解构出来的 data 属性，使用 冒号 进行重命名，一般都重命名为 { data: res }
+      const { data: res } = await axios({
+        method: 'GET',
+        url: 'http://www.liulongbin.top:3006/api/getbooks'
+      })
+
+      console.log(res.data)
+    })
+  </script>
+</body>
+
+</html>
+```
+
+
 
 # 跨域与JSONP
 
