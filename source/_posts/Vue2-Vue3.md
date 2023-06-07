@@ -2605,25 +2605,137 @@ ref 用来辅助开发者在不依赖于jQuery 的情况下，获取DOM 元素�
 
 因为每一次数据的改变都会触发update()方法，如果到时候失去焦点的时候，我们就没有那个元素了，也就为null了，但是这个可以在逻辑代码里面自己判断，所以update总的来说还是可以的，但是使用的话比较复杂而已
 
+## 动态组件
+
+### 什么是动态组件
+
+动态组件指的是动态切换组件的显示与隐藏。
+
+### 如何实现动态组件渲染
+
+vue 提供了一个内置的 `<component>`组件，专门用来实现动态组件的渲染。示例代码如下：
+
+![image-20230607214433988](../pic/image-20230607214433988.png)
+
+is属性里面填的是组件的名字，注意，这两个图片是不一样的,上面的使用了动态绑定，下面的是初始的版本
+
+![image-20230607214438972](../pic/image-20230607214438972.png)
+
+### 使用 keep-alive 保持状态
+
+默认情况下，切换动态组件时无法保持组件的状态（也就是说这里面的组件如果切换了，就会重新渲染页面（其实底层是组件的创建和销毁，这个东西是Vue帮我们实现的），包括里面的数据也会重置为原始的数据）。此时可以使用vue 内置的 `<keep-alive> `组件保持动态组件的状态。示例代码如下：
+
+![image-20230607214533163](../pic/image-20230607214533163.png)
+
+keep-alive可以把内部的组件进行缓存（可以通过Vue的调试工具看到，标记为inactive了），而不是销毁！！
+
+### keep-alive 对应的生命周期函数
+
+当组件被缓存时，会自动触发组件的deactivated 生命周期函数。当组件被激活时，会自动触发组件的 activated 生命周期函数。
+
+![image-20230607214554071](../pic/image-20230607214554071.png)
+
+当组件第一次被创建的时候，既会执行created 生命周期，也会执行activated 生命周期
+
+当组件被激活的时候，只会触发activated 生命周期，不再触发created。 因为组件没有被重新创建
+
+### keep-alive 的 include 属性
+
+默认的情况下，被keep-alive标签包括的组件都会被缓存，但是，我们可以指定只缓存哪几个组件，这样就比较灵活了
+
+include 属性用来指定：只有名称匹配的组件会被缓存。多个组件名之间使用英文的逗号分隔：
+
+![image-20230607214617380](../pic/image-20230607214617380.png)
+
+keep-alive标签还有一个exclude属性来标识不缓存哪个组件，用法和include一样，但是，这两个属性不能同时使用
 
 
 
+还有一点是这个include属性里面填的是组件的名称，是在这里定义的
 
+![image-20230607214630107](../pic/image-20230607214630107.png)
 
+## 插槽
 
+### 什么是插槽
 
+插槽（Slot）是 vue 为组件的封装者提供的能力。允许开发者在封装组件时，把不确定的、希望由用户指定的部分定义为插槽。
 
+![image-20230607221935890](../pic/image-20230607221935890.png)
 
+可以把插槽认为是组件封装期间，为用户预留的内容的占位符。
 
+### 体验插槽的基础用法
 
+在封装组件时，可以通过`<slot>` 元素定义插槽，从而为用户预留内容占位符。示例代码如下：
 
+![image-20230607222105993](../pic/image-20230607222105993.png)
 
+我们在使用这个组件的时候，可以自定义内容到插槽里面，如下代码：
 
+![image-20230607222136110](../pic/image-20230607222136110.png)
 
+#### 没有预留插槽的内容会被丢弃
 
+如果在封装组件时没有预留任何` <slot>` 插槽，则用户提供的任何自定义内容都会被丢弃。示例代码如下：
 
+![image-20230607222210990](../pic/image-20230607222210990.png)
 
+如果没有预留插槽，我们的内容会丢失，如下代码使用：
 
+![image-20230607222243709](../pic/image-20230607222243709.png)
+
+#### 后备内容
+
+封装组件时，可以为预留的 `<slot>` 插槽提供后备内容（默认内容）。如果组件的使用者没有为插槽提供任何内容，则后备内容会生效。示例代码如下：
+
+![image-20230607222344370](../pic/image-20230607222344370.png)
+
+### 具名插槽
+
+如果在封装组件时需要预留**多个插槽节点**，则需要为每个` <slot> `插槽指定具体的name 名称。这种带有具体名称的插槽叫做“具名插槽”。示例代码如下：
+
+![image-20230607222427225](../pic/image-20230607222427225.png)
+
+注意：没有指定 name 名称的插槽，会有隐含的名称叫做 “default”。
+
+#### 为具名插槽提供内容
+
+在向具名插槽提供内容的时候，我们可以在一个 `<template> `元素上使用v-slot 指令（但是注意：v-slot 指令只能用在template标签上或者是我们自定义的组件上！！！），并以v-slot 的参数的形式提供其名称。示例代码如下：
+
+![image-20230607222523958](../pic/image-20230607222523958.png)
+
+template这个标签，它是一个虚拟的标签，不会渲染到页面上，只起到标识渲染到的位置的作用
+
+#### 具名插槽的简写形式
+
+跟 v-on 和 v-bind 一样，v-slot 也有缩写，即把参数之前的所有内容(v-slot:) 替换为字符#。
+
+例如v-slot:header可以被重写为#header，所以上面的代码可以改成：
+
+![image-20230607222621452](../pic/image-20230607222621452.png)
+
+### 作用域插槽
+
+在封装组件的过程中，可以为预留的` <slot>` 插槽绑定props 数据，这种带有props 数据的 `<slot> `叫做“作用域插槽”。示例代码如下：
+
+![image-20230607222647680](../pic/image-20230607222647680.png)
+
+![image-20230607222701141](../pic/image-20230607222701141.png)
+
+#### 使用作用域插槽
+
+可以使用v-slot: 的形式，**接收**作用域插槽对外提供的数据。示例代码如下：
+
+![image-20230607222715275](../pic/image-20230607222715275.png)
+
+#### 解构插槽
+
+Prop作用域插槽对外提供的数据对象，可以使用解构赋值简化数据的接收过程。示例代码如下：
+
+![image-20230607222731282](../pic/image-20230607222731282.png)
+
+## 自定义指令
 
 
 
@@ -2724,147 +2836,7 @@ Vue.js 路由需要载入 vue-router 库
 
 ![image-20230403101514535](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/image-20230403101514535.png)
 
-## 小黑记事本
 
-### 1.新增
-
-1. 生成列表结构(v-for和数组)
-
-2. 获取用户输入(v-model)
-
-3. 回车,新增数据(v-on .enter 添加数据)
-
-4. 总结
-   1.  v-for指令的作用
-   2.  v-model指令的作用
-   3.  v-on指令,事件修饰符
-   4.  通过审查元素快速定位
-
-### 2.删除 
-
-1.数据改变，和数据绑定的元素同步改变
-
-2.事件可以接收自定义的参数
-
-3.splice的作用：根据索引删除对应元素
-
-### 3.统计
-
-1.基于数据的开发方式
-
-2.v-text指令是设置文本，也可以用插值表达式{undefined{}}
-
-### 4.清空
-
-1.基于数据的开发方式-清空数组即可
-
-### 5.隐藏
-
-没有数据时，隐藏元素（数组非空时v-if v-show ）
-
-### 6.总结
-
-1. 列表结构可以通过v-for指令结合数据生成
-
-2. v-on结合事件修饰符可以对事件进行限制,比如.enter
-
-3. v-on在绑定事件时可以传递自定义参数
-
-4. 通过v-model可以快速的设置和获取表单元素的值
-
-5. 基于数据的开发方式
-
-```html
-<html>
-
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-  <title>小黑记事本</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-  <meta name="robots" content="noindex, nofollow" />
-  <meta name="googlebot" content="noindex, nofollow" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" type="text/css" href="./css/index.css" />
-</head>
-
-<body>
-  <!-- 主体区域 -->
-  <section id="todoapp">
-    <!-- 输入框 -->
-    <header class="header">
-      <h1>小黑记事本</h1>
-      <input v-model="inputValue" @keyup.enter="add" autofocus="autofocus" autocomplete="off" placeholder="请输入任务"
-        class="new-todo" />
-    </header>
-    <!-- 列表区域 -->
-    <section class="main">
-      <ul class="todo-list">
-        <li class="todo" v-for="(item,index) in list">
-          <div class="view">
-            <span class="index">{{ index+1 }}.</span>
-            <label>{{ item }}</label>
-            <button class="destroy" @click="remove(index)"></button>
-          </div>
-        </li>
-      </ul>
-    </section>
-    <!-- 统计和清空 -->
-    <footer class="footer"  v-show="list.length!=0">
-      <span class="todo-count" v-show="list.length!=0">
-        <strong>{{list.length}}</strong> items left
-      </span>
-      <button v-show="list.length!=0" class="clear-completed" @click="clear">
-        Clear
-      </button>
-    </footer>
-  </section>
-  <!-- 底部 -->
-  <footer class="info">
-    <p>
-      <a href="http://www.itheima.com/"><img src="./img/black.png" alt="" /></a>
-    </p>
-  </footer>
-  <!-- 开发环境版本，包含了有帮助的命令行警告 -->
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <script>
-    var app = new Vue({
-      el: "#todoapp",
-      data: {
-        list: ["写代码", "吃饭饭", "睡觉觉"],
-        inputValue: "好好学习,天天向上"
-      },
-      methods: {
-        add: function () {
-          this.list.push(this.inputValue);
-        },
-        remove:function(index){
-          console.log("删除");
-          console.log(index);
-          this.list.splice(index,1);
-        },
-        clear:function(){
-          this.list=[];
-        }
-      },
-    })
-  </script>
-</body>
-
-</html>
-
-```
-
-![image-20220507133352473](../pic/image-20220507133352473-166178728503722.png)
-
-## 网络应用-介绍
-
-1.Vue结合网络数据开发应用
-
-2.axios-网络请求库
-
-3.axios+vue-结合Vue一起
-
-4.天气预报案例
 
 ## 网络应用- axios基本使用
 
@@ -3025,259 +2997,7 @@ axios.post(地址,{key:value,key2:value2}).then(function(response){},function(er
 
 ![image-20220507175645674](../pic/image-20220507175645674-166178728503723.png)
 
-## 网络应用- axios与vue结合使用
 
-1.axios回调函数中的this已经改变,无法访问到data中数据
-
-2.把this保存起来,回调函数中直接使用保存的this即可
-
-3.和本地应用的最大区别就是改变了数据来源
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>26-网络应用- axios与vue结合使用</title>
-</head>
-<body>
-    <div id="app">
-        <input type="button" value="获取笑话" @click="getJoke">
-        <p>{{joke}}</p>
-    </div>
-    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <!-- 官网提供的 axios 在线地址 -->
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-        /*
-            接口:随机获取一条笑话
-            请求地址:https://autumnfish.cn/api/joke
-            请求方法:get
-            请求参数:无
-            响应内容:随机笑话
-        */
-       var app=new Vue({
-           el:"#app",
-           data:{
-               joke:"笑话显示区域",
-               
-           },
-           methods:{
-               
-               getJoke:function(){
-                   console.log(this.joke);
-                  var that=this;
-                   axios.get("https://autumnfish.cn/api/joke")
-                   .then(function(response){
-                       console.log(response);
-                       console.log(response.data);
-                       console.log(this.joke);
-                       that.joke=response.data;
-                   },function(err){
-                       console.log(err);
-                   })
-               }
-           }
-       })
-    </script>
-</body>
-</html>
-
-```
-
-![image-20220507181253173](../pic/image-20220507181253173-166178728503724.png)
-
-## 网络应用-天知道
-
-1. 按下回车(v-on .enter)
-2. 查询数据(axios 接口 v-model )
-3. 渲染数据(v-for 数组 that)
-   应用的逻辑代码建议和页面分离，使用单独的js文件编写
-   axios回调函数中this指向改变了，需要额外的保存一份
-   服务器返回的数据比较复杂时，获取的时候需要注意层级结构
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>天知道</title>
-  <link rel="stylesheet" href="css/reset.css" />
-  <link rel="stylesheet" href="css/index.css" />
-</head>
-
-<body>
-  <div class="wrap" id="app">
-    <div class="search_form">
-      <div class="logo"><img src="img/logo.png" alt="logo" /></div>
-      <div class="form_group">
-        <input type="text" v-model="city"  @keyup.enter="searchWeather"   
-        class="input_txt" placeholder="请输入查询的天气"/>
-        <button class="input_sub" @click="searchWeather">
-          搜 索
-        </button>
-      </div>
-      <div class="hotkey">
-        <a href="javascript:;" @click="changeCity('北京')">北京</a>
-        <a href="javascript:;" @click="changeCity('上海')">上海</a>
-        <a href="javascript:;" @click="changeCity('广州')">广州</a>
-        <a href="javascript:;" @click="changeCity('深圳')">深圳</a>
-      </div>
-    </div>
-    <ul class="weather_list">
-      <li v-for="item in weatherList">
-        <div class="info_type"><span class="iconfont">{{ item.type }}</span></div>
-        <div class="info_temp">
-          <b>{{ item.low }}</b>
-          ~
-          <b>{{ item.high }}</b>
-        </div>
-        <div class="info_date"><span>{{ item.date }}</span></div>
-      </li>
-    </ul>
-  </div>
-  <!-- 开发环境版本，包含了有帮助的命令行警告 -->
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <!-- 官网提供的 axios 在线地址 -->
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <!-- 自己的js -->
-  <script src="./js/main.js"></script>
-</body>
-
-</html>
-
-```
-
-```js
-var app=new Vue({
-    el:"#app",
-    data:{
-        city:'',
-    },
-    methods:{
-        searchWeather:function(){
-            var that =this;
-            axios.get('http://wthrcdn.etouch.cn/weather_mini?city='+this.city)
-            .then(function(response){
-            that.weatherList=response.data.data.forecast;
-            })
-            .catch(function(err){})
-        },
-        changeCity:function(city){
-            this.city=city;
-            this.searchWeather();
-        }
-    }
-})
-```
-
-
-
-## 综合应用（音乐播放器）
-
-**介绍**：
-
-1.歌曲搜索
-2.歌曲播放（点击按钮播放）
-3.歌曲封面
-4.歌曲评论
-5.播放动画
-6.mv播放
-
-**综合应用-歌曲搜索**
-
-1. 按下回车(v-on .enter)
-
-2. 查询数据(axios 接口 v-model )
-
-3. 渲染数据(v-for 数组 that)
-
-**综合应用-歌曲播放**
-
-1. 点击播放(v-on 自定义参数)
-   点击播放按钮：播放歌曲的本质就是设置歌曲的src，切换歌曲就是更换不同的src，歌曲的地址从network查看，歌曲地址是通过接口获取到的，获取歌曲地址后找到歌曲播放地址，将播放地址存到data的musicUrl字段中，再传给给audio标签；
-   注：点击时需要传入参数，从接口获得的歌曲的点击事件才会才会被绑定。
-
-2. 歌曲地址获取：
-   根据接口确定一个传递的参数（歌曲id），搜索出的歌曲时服务器返回的结果数组中每一项都有歌曲id，不同歌曲id不同，但查询逻辑是一样的；（总：接口调用，把所需的参数传过去）
-
-3. 歌曲地址设置(v-bind)
-   data中增加歌曲属性，歌曲id依赖与歌曲的搜索结果，v-bind绑定到播放条中。
-
-**综合应用-歌曲封面**
-
-**综合应用-播放动画**
-
-1. 监听音乐播放(v-on play)
-   核心：增删一个类
-   播放时碟片旋转，暂停时停时旋转，检测动画的播放状态，在对应的事件中增删类名，
-
-2. 监听音乐暂停(v-on pause)
-3. 操纵类名(v-bind 对象)
-   audio标签的play事件会在音频播放的时候触发
-   audio标签的pause事件会在音频暂停的时候触发
-   通过对象的方式设置类名，类名生效与否取决于后面值的真假
-
-**综合应用-播放mv**
-
-1. mv图标显示(v-if)
-2. mv地址获取
-3. 遮罩层
-4. mv地址设置
-   21-综合应用（音乐播放器）-介绍
-   注：
-   综合应用-音乐播放器
-   代码地址：
-
-介绍
-1.歌曲搜索
-2.歌曲播放（点击按钮播放）
-3.歌曲封面
-4.歌曲评论
-5.播放动画
-6.mv播放
-
-**综合应用-歌曲搜索**
-
-1. 按下回车(v-on .enter)
-2. 查询数据(axios 接口 v-model )
-3. 渲染数据(v-for 数组 that)
-   23-综合应用-歌曲播放
-4. 点击播放(v-on 自定义参数)
-   点击播放按钮：播放歌曲的本质就是设置歌曲的src，切换歌曲就是更换不同的src，歌曲的地址从network查看，歌曲地址是通过接口获取到的，获取歌曲地址后找到歌曲播放地址，将播放地址存到data的musicUrl字段中，再传给给audio标签；
-   注：点击时需要传入参数，从接口获得的歌曲的点击事件才会才会被绑定。
-
-5. 歌曲地址获取：
-   根据接口确定一个传递的参数（歌曲id），搜索出的歌曲时服务器返回的结果数组中每一项都有歌曲id，不同歌曲id不同，但查询逻辑是一样的；（总：接口调用，把所需的参数传过去）
-
-6. 歌曲地址设置(v-bind)
-   data中增加歌曲属性，歌曲id依赖与歌曲的搜索结果，v-bind绑定到播放条中。
-
-**综合应用-歌曲封面**
-
-**综合应用-播放动画**
-
-1. 监听音乐播放(v-on play)
-   核心：增删一个类
-   播放时碟片旋转，暂停时停时旋转，检测动画的播放状态，在对应的事件中增删类名，
-
-2. 监听音乐暂停(v-on pause)
-3. 操纵类名(v-bind 对象)
-   audio标签的play事件会在音频播放的时候触发
-   audio标签的pause事件会在音频暂停的时候触发
-   通过对象的方式设置类名，类名生效与否取决于后面值的真假
-
-**综合应用-播放mv**
-
-1. mv图标显示(v-if)
-2. mv地址获取
-3. 遮罩层
-4. mv地址设置 
 
 # Vue3
 
