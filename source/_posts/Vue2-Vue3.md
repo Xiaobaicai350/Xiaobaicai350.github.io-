@@ -2737,6 +2737,91 @@ Prop作用域插槽对外提供的数据对象，可以使用解构赋值简化�
 
 ## 自定义指令
 
+### 什么是自定义指令
+
+vue 官方提供了v-text、v-for、v-model、v-if 等常用的指令。除此之外vue 还允许开发者自定义指令。
+
+### 自定义指令的分类
+
+vue 中的自定义指令分为两类，分别是：
+
+1. 私有自定义指令
+2. 全局自定义指令
+
+### 私有自定义指令
+
+在每个vue 组件中，可以在directives 节点（这个节点和data，methods节点都是平级的）下声明私有自定义指令。示例代码如下：
+
+![image-20230608094756502](../pic/image-20230608094756502.png)
+
+这个bind函数的触发时机就是当使用这个自定义指令的时候会执行
+
+### 使用自定义指令
+
+在使用自定义指令时，需要加上v- 前缀。示例代码如下：
+
+![image-20230608094821852](../pic/image-20230608094821852.png)
+
+### 为自定义指令动态绑定参数值
+
+在 template 结构中使用自定义指令时，可以通过等号（=）的方式，为当前指令动态绑定参数值：
+
+![image-20230608094841723](../pic/image-20230608094841723.png)
+
+### 通过 binding 获取指令的参数值
+
+在声明自定义指令时，可以通过形参中的第二个参数，来接收指令的参数值：
+
+![image-20230608094907060](../pic/image-20230608094907060.png)
+
+### update 函数
+
+之前我们不是把颜色的值放在了data里面嘛，如果我们想改这个值，那我们可以正常改，但是发现颜色并不会改变，因为bind函数里面的逻辑只在初始化的时候执行
+
+bind 函数只在初始化的时候调用 1 次：当指令第一次绑定到元素时调用，当 DOM 更新时bind 函数不会被触发。 update 函数（这个update函数跟生命周期那个函数不一样）会在每次 DOM 更新时被调用。示例代码如下：
+
+![image-20230608094930824](../pic/image-20230608094930824.png)
+
+### 函数简写
+
+如果 bind和update 函数中的逻辑完全相同，则对象格式的自定义指令可以简写成函数格式：
+
+![image-20230608095059804](../pic/image-20230608095059804.png)
+
+### 全局自定义指令
+
+全局共享的自定义指令需要通过“Vue.directive()”进行声明，示例代码如下：
+
+![image-20230608095111296](../pic/image-20230608095111296.png)
+
+上面是简化写法，这个是完整写法
+
+![image-20230608095120684](../pic/image-20230608095120684.png)
+
+这个和定义全局过滤器差不多
+
+
+
+
+
+
+
+
+
+axios补充，还没弄完
+
+![image-20230608122337672](../pic/image-20230608122337672.png)![image-20230608122402552](../pic/image-20230608122402552.png)
+
+
+
+
+
+
+
+![image-20230608123051826](../pic/image-20230608123051826.png)
+
+![image-20230608123104045](../pic/image-20230608123104045.png)
+
 
 
 
@@ -2749,94 +2834,366 @@ Prop作用域插槽对外提供的数据对象，可以使用解构赋值简化�
 
 ## 路由
 
-Vue.js 路由允许我们通过不同的 URL 访问不同的内容。
+### 前端路由的概念与原理
 
-通过 Vue.js 可以实现多视图的单页Web应用（single page web application，SPA）。
+路由（英文：router）就是页面hash与组件的对应关系。
 
-Vue.js 路由需要载入 vue-router 库
+#### SPA 与前端路由
 
+SPA 指的是一个web 网站只有唯一的一个HTML 页面，所有组件的展示与切换都在这唯一的一个页面内完成。此时，不同组件之间的切换需要通过前端路由来实现。
 
+结论：在 SPA 项目中，不同功能之间的切换，要依赖于前端路由来完成！
+
+#### 锚链接实现
 
 ```html
+锚链接：
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vue基础</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      height: 800px;
+    }
+
+    #b1 {
+      background-color: pink;
+    }
+
+    #b2 {
+      background-color: red;
+    }
+
+    #b3 {
+      background-color: orange;
+    }
+
+    #b4 {
+      background-color: skyblue;
+    }
+
+    .side-bar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      background: white;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="side-bar">
+    <a href="#b1">b1</a>
+    <a href="#b2">b2</a>
+    <a href="#b3">b3</a>
+    <a href="#b4">b4</a>
+  </div>
 
-    <div id="app">
-        <div id="app">
-            <h1>Hello App!</h1>
-            <p>
-                <!-- 使用 router-link 组件来导航. -->
-                <!-- 通过传入 `to` 属性指定链接. -->
-                <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
-                <router-link to="/">首页</router-link>
-                <router-link to="/student">会员管理</router-link>
-                <router-link to="/teacher">讲师管理</router-link>
-            </p>
-            <!-- 路由出口 -->
-            <!-- 路由匹配到的组件将渲染在这里 -->
-            <router-view></router-view>
-        </div>
-    </div>
-
-    <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
-    <!-- 低版本，也可以使用 -->
-    <!-- <script src="https://cdn.staticfile.org/vue-router/2.7.0/vue-router.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/vue-router@3.5.1/dist/vue-router.min.js"></script>
-    
-    <script>
-        // 1. 定义（路由）组件。
-        // 可以从其他文件 import 进来
-        const Welcome = { template: '<div>欢迎</div>' }
-        const Student = { template: '<div>student list</div>' }
-        const Teacher = { template: '<div>teacher list</div>' }
-        
-        
-        // 2. 定义路由
-        // 每个路由应该映射一个组件。
-        const routes = [
-            { path: '/', redirect: '/welcome' }, //设置默认指向的路径
-            { path: '/welcome', component: Welcome },
-            { path: '/student', component: Student },
-            { path: '/teacher', component: Teacher }
-        ]
-        
-        
-        // 3. 创建 router 实例，然后传 `routes` 配置
-        const router = new VueRouter({
-            routes // （缩写）相当于 routes: routes
-        })
-        
-
-        // 4. 创建和挂载根实例。
-        // 从而让整个应用都有路由功能
-        const app = new Vue({
-            el: '#app',
-            router
-        })
-        // 现在，应用已经启动了！
-    </script>
+  <div class="box" id="b1"></div>
+  <div class="box" id="b2"></div>
+  <div class="box" id="b3"></div>
+  <div class="box" id="b4"></div>
 </body>
+
 </html>
+
 ```
 
-![image-20221002204319312](../pic/image-20221002204319312.png)
+#### 前端路由的工作方式
 
-点击超链接会改变下面文字的内容
+①	用户点击了页面上的路由链接
+
+②	导致了 URL 地址栏中的Hash 值发生了变化
+
+③	前端路由监听了到Hash 地址的变化
+
+④	前端路由把当前 Hash 地址对应的组件渲染都浏览器中
+
+![image-20230608135746288](../pic/image-20230608135746288.png)
+
+结论：前端路由，指的是Hash 地址与组件之间的对应关系！
+
+#### 实现简易的前端路由
+
+步骤1：通过 `<component>` 标签，结合comName 动态渲染组件。示例代码如下：
+
+![image-20230608135808481](../pic/image-20230608135808481.png)
+
+步骤2：在App.vue 组件中，为`<a>` 链接添加对应的hash 值：
+
+![image-20230608135819924](../pic/image-20230608135819924.png)
+
+步骤3：在created 生命周期函数中，监听浏览器地址栏中hash 地址的变化，动态切换要展示的组件的名称：
+
+![image-20230608135927081](../pic/image-20230608135927081.png)
+
+代码实现：
+
+```vue
+<template>
+  <div class="app-container">
+    <h1>App 根组件</h1>
+
+    <a href="#/home">首页</a>
+    <a href="#/movie">电影</a>
+    <a href="#/about">关于</a>
+    <hr />
+
+    <component :is="comName"></component>
+  </div>
+</template>
+
+<script>
+// 导入组件
+import Home from "@/components/Home.vue";
+import Movie from "@/components/Movie.vue";
+import About from "@/components/About.vue";
+
+export default {
+  name: "App",
+  data() {
+    return {
+      // 在动态组件的位置，要展示的组件的名字，值必须是字符串
+      comName: "Home",
+    };
+  },
+  created() {
+    // 只要当前的 App 组件一被创建，就立即监听 window 对象的 onhashchange 事件
+    window.onhashchange = () => {
+      console.log("监听到了 hash 地址的变化", location.hash);
+      switch (location.hash) {
+        case "#/home":
+          this.comName = "Home";
+          break;
+        case "#/movie":
+          this.comName = "Movie";
+          break;
+        case "#/about":
+          this.comName = "About";
+          break;
+      }
+    };
+  },
+  // 注册组件
+  components: {
+    Home,
+    Movie,
+    About,
+  },
+};
+</script>
+
+<style lang="less" scoped>
+.app-container {
+  background-color: #efefef;
+  overflow: hidden;
+  margin: 10px;
+  padding: 15px;
+  > a {
+    margin-right: 10px;
+  }
+}
+</style>
+
+```
+
+### vue-router 的基本用法
+
+#### 在项目中安装 vue-router
+
+在 vue2 的项目中，安装vue-router 的命令如下：
+
+![image-20230608162724011](../pic/image-20230608162724011.png)
+
+#### 创建路由模块
+
+在 src 源代码目录下，新建router/index.js 路由模块，并初始化如下的代码：
+
+![image-20230608162740833](../pic/image-20230608162740833.png)
+
+#### 导入并挂载路由模块
+
+在 src/main.js 入口文件中，导入并挂载路由模块。示例代码如下：
+
+![image-20230608162755899](../pic/image-20230608162755899.png)
+
+#### 声明路由链接和占位符
+
+在 src/App.vue 组件中，使用vue-router 提供的 `<router-link>` 和 `<router-view>` 声明**路由链接**和**占位符**：
+
+![image-20230608162818705](../pic/image-20230608162818705.png)
+
+#### 声明路由的匹配规则
+
+在 src/router/index.js 路由模块中，通过routes 数组声明路由的匹配规则。示例代码如下：
+
+![image-20230608162842908](../pic/image-20230608162842908.png)
+
+### vue-router 的常见用法
+
+#### 路由重定向
+
+路由重定向指的是：用户在访问地址 A 的时候，强制用户跳转到地址C ，从而展示特定的组件页面。通过路由规则的redirect 属性，指定一个新的路由地址，可以很方便地设置路由的重定向：
+
+![image-20230608162909465](../pic/image-20230608162909465.png)
+
+#### 嵌套路由
+
+通过路由实现组件的嵌套展示，叫做嵌套路由。
+
+简单来说就是路由里面又有路由（套娃）
+
+![image-20230608162946257](../pic/image-20230608162946257.png)
+
+##### 声明子路由链接和子路由占位符
+
+在 About.vue 组件中，声明tab1 和 tab2 的子路由链接以及子路由占位符。示例代码如下：
+
+![image-20230608163032603](../pic/image-20230608163032603.png)
+
+##### 通过 children 属性声明子路由规则
+
+在 src/router/index.js 路由模块中，导入需要的组件，并使用children 属性声明子路由规则：
+
+![image-20230608163126689](../pic/image-20230608163126689.png)
+
+配置子路由的默认跳转页面：
+
+![image-20230608163148719](../pic/image-20230608163148719.png)
+
+#### 动态路由匹配
+
+思考：有如下 3 个路由链接：
+
+![image-20230608163208297](../pic/image-20230608163208297.png)
+
+定义如下 3 个路由规则，是否可行? 
+
+- 是可行的，就是复用性太差了，所以我们需要动态路由
+
+![image-20230608163225677](../pic/image-20230608163225677.png)
+
+##### 动态路由的概念
+
+动态路由指的是：把Hash 地址中可变的部分定义为参数项，从而提高路由规则的复用性。在 vue-router 中使用英文的冒号（:）来定义路由的参数项。示例代码如下：
+
+![image-20230608163303526](../pic/image-20230608163303526.png)
+
+##### $route.params 参数对象
+
+在动态路由渲染出来的组件中，可以使用this.$route.params 对象访问到动态匹配的参数值。
+
+![image-20230608163317558](../pic/image-20230608163317558.png)
+
+但是这样取到的值很麻烦，下面还有一种方法可以简便的获取传过来的参数值
+
+##### 使用 props 接收路由参数
+
+为了简化路由参数的获取形式，vue-router 允许在路由规则中开启props 传参。示例代码如下：
+
+![image-20230608163419334](../pic/image-20230608163419334.png)
 
 
 
-基本结构
+在这里需要补充一点，万一url后面还加的有查询参数（?name=zs&age=18这种）的话，可以通过这种方式来进行接收
 
-![image-20230403101514535](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/image-20230403101514535.png)
+![image-20230608163515943](../pic/image-20230608163515943.png)
+
+#### 声明式导航 & 编程式导航
+
+在浏览器中，点击链接实现导航的方式，叫做声明式导航。例如：
+
+- 普通网页中点击`<a>` 链接、vue 项目中点击 `<router-link>` 都属于声明式导航
+
+  
+
+在浏览器中，调用 API 方法实现导航的方式，叫做编程式导航。例如：
+
+- 普通网页中调用 location.href 跳转到新页面的方式，属于编程式导航
+
+##### vue-router 中的编程式导航 API
+
+vue-router 提供了许多编程式导航的API，其中最常用的导航 API 分别是：
+
+①	this.$router.push('hash 地址')
+
+- 跳转到指定hash 地址，并增加一条历史记录
 
 
+
+②	this.$router.replace('hash 地址')
+
+- 跳转到指定的hash 地址，并替换掉当前的历史记录
+
+
+
+③	this.$router.go(数值 n)
+
+- 实现导航历史前进、后退
+
+###### $router.push
+
+调用this.$router.push() 方法，可以跳转到指定的hash 地址，从而展示对应的组件页面。示例代码如下：
+
+![image-20230608163747929](../pic/image-20230608163747929.png)
+
+###### $router.replace
+
+调用this.$router.replace() 方法，可以跳转到指定的hash 地址，从而展示对应的组件页面。
+
+
+
+push 和 replace 的区别：
+
+- push 会增加一条历史记录
+- replace 不会增加历史记录，而是替换掉当前的历史记录
+
+###### $router.go
+
+调用this.$router.go() 方法，可以在浏览历史中前进和后退。示例代码如下：
+
+![image-20230608163827561](../pic/image-20230608163827561.png)
+
+注意：如果后退的次数超过上限，会原地不动。。。所以一般都后退一步或者前进一步
+
+###### $router.go 的简化用法
+
+在实际开发中，一般只会前进和后退一层页面。因此vue-router 提供了如下两个便捷方法：
+
+①	$router.back()
+
+在历史记录中，后退到上一个页面
+
+
+
+②	$router.forward()
+
+在历史记录中，前进到下一个页面
+
+
+
+#### 导航守卫
+
+导航守卫可以控制路由的访问权限。示意图如下：
+
+![image-20230608163939911](../pic/image-20230608163939911.png)
+
+##### 全局前置守卫
+
+每次发生路由的导航跳转时，都会触发全局前置守卫。因此，在全局前置守卫中，程序员可以对每个路由进行访问权限的控制：
+
+![image-20230608164000908](../pic/image-20230608164000908.png)
+
+##### 守卫方法的 3 个形参
+
+全局前置守卫的回调函数中接收 3 个形参，格式为：
+
+![image-20230608164015700](../pic/image-20230608164015700.png)
 
 ## 网络应用- axios基本使用
 
