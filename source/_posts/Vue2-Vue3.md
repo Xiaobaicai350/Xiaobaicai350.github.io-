@@ -3211,170 +3211,321 @@ push 和 replace 的区别：
 
 ![image-20230608164136480](../pic/image-20230608164136480.png)
 
-## 网络应用- axios基本使用
-
-基本应用
-
-编写data.json
-
-```json
-{
-    "success":true ,
-    "code" :20000,
-    "message":"成功",
-    "data":{
-        "items":[
-            {"name":"lucy","age":20},
-            {"name":"mary","age":100},
-            {"name":"jack","age":200}
-        ]
-    }
-}
-```
-
-编写html和axios
-
-```html
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-        new Vue({
-            el: '#app',
-            data: {
-
-                //定义变量。由于在json中写的是数组结构，我们也创建成数组结构
-                memberList: []
-            },
-            created(){
-                this.getList()
-            },
-            methods: {
-                getList(id) {
-                    //axios.提交方式(请求的接口的路径或者地址).then().catch()
-                    axios.get('data.json')
-                        .then(response => {//请求成功会执行then方法（response是一个变量，里面封装着返回回来的数据）
-                            console.log(response)
-                        	//把值赋值给memberList
-                            this.memberList = response.data.data.items
-                        })
-                        .catch(error => {//请求失败会执行catch方法（error是一个变量名）
-                            console.log(error)
-                        })
-                }
-            }
-        })
-    </script>
-```
-
-**得到的结果**
-
-![image-20221002213000542](../pic/image-20221002213000542.png)
-
-是封装到data里面的
-
-**利用vue循环输出**
-
-```html
-<div id="app">
-    <table border="1">
-        <tr v-for="user in memberList">
-            <td>{{user.name}}</td>
-            <td>{{user.age}}</td>
-        </tr>
-    </table>
-</div>
-```
 
 
 
-### 要点
-
-1. axios：功能强大的网络请求库
-2. axios必须先导入才可以使用
-3. 使用get或post方法即可发送对应的请求
-4. then方法中的回调函数会在请求成功或失败时触发（请求成功是第一个函数，请求失败是执行的第二个函数）
-5. 通过回调函数的形参可以获取响应内容,或错误信息
-6. 文档传送门：https://github.com/axios/axios
-7. axios官网文档：http://www.axios-js.com/zh-cn/docs/
-
-```
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-```
-
-**模板：**
-
-```
-axios.get(地址?key=value&key2=values).then(function(response){},function(err){})
-axios.post(地址,{key:value,key2:value2}).then(function(response){},function(err){})
-```
-
-![image-20230403103258117](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/image-20230403103258117.png)
-
-第二个请求：
-
-![image-20230403111309215](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/image-20230403111309215.png)
-
-![image-20230403111357827](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/image-20230403111357827.png)
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>25-网络应用- axios基本使用</title>
-</head>
-<body>
-    <input type="button" value="get请求" class="get">
-    <input type="button" value="post请求" class="post">
-    <!-- 官网提供的 axios 在线地址 -->
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-        /*
-            接口1:随机笑话
-            请求地址:https://autumnfish.cn/api/joke/list
-            请求方法:get
-            请求参数:num(笑话条数,数字)
-            响应内容:随机笑话
-        */
-        document.querySelector(".get").onclick=function(){
-            axios.get("https://autumnfish.cn/api/joke/list?num=3")
-            .then(function(response){
-                console.log(response);
-            },function(err){
-                console.log(err);
-            })
-        }
-        /*
-             接口2:用户注册
-             请求地址:https://autumnfish.cn/api/user/reg
-             请求方法:post
-             请求参数:username(用户名,字符串)
-             响应内容:注册成功或失败
-         */
-         document.querySelector(".post").onclick=function(){
-            axios.post("https://autumnfish.cn/api/user/reg",{username:"阿香"})
-            .then(function(response){
-                console.log(response);
-            },function(err){
-                console.log(err);
-            })
-        }
-
-    </script>
-</body>
-</html>
 
 
-```
-
-![image-20220507175645674](../pic/image-20220507175645674-166178728503723.png)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 # Vue3
 
+## ES6模块化与异步编程高级用法
+
+### ES6 模块化
+
+#### 回顾：node.js 中如何实现模块化
+
+node.js 遵循了 CommonJS 的模块化规范。其中：
+
+- 导入其它模块使用require() 方法
+- 模块对外共享成员使用module.exports 对象
+
+
+
+模块化的好处：
+
+大家都遵守同样的模块化规范写代码，降低了沟通的成本，极大方便了各个模块之间的相互调用，利人利己。
+
+#### 前端模块化规范的分类
+
+在 ES6 模块化规范诞生之前，JavaScript 社区已经尝试并提出了AMD、CMD、CommonJS 等模块化规范。但是，这些由社区提出的模块化标准，还是存在一定的差异性与局限性、并不是浏览器与服务器通用的模块化标准，例如：
+
+- AMD 和 CMD 适用于浏览器端的 Javascript 模块化
+- CommonJS 适用于服务器端的 Javascript 模块化
+
+
+
+太多的模块化规范给开发者增加了学习的难度与开发的成本。因此，大一统的ES6 模块化规范诞生了！
+
+#### 什么是 ES6 模块化规范
+
+ES6 模块化规范是浏览器端与服务器端通用的模块化开发规范。它的出现极大的降低了前端开发者的模块化学习成本，开发者不需再额外学习AMD、CMD 或 CommonJS 等模块化规范。
+
+
+
+ES6 模块化规范中定义：
+
+- 每个 js 文件都是一个独立的模块
+- 导入其它模块成员使用 import 关键字
+- 向外共享模块成员使用export 关键字
+
+
+
+#### 在 node.js 中体验 ES6 模块化
+
+node.js 中默认仅支持 CommonJS 模块化规范，若想基于node.js 体验与学习ES6 的模块化语法，可以按照如下两个步骤进行配置：
+
+①	确保安装了v14.15.1 或更高版本的node.js
+
+②	在 package.json 的根节点中添加 "type": "module" 节点
+
+#### ES6 模块化的基本语法
+
+ES6 的模块化主要包含如下 3 种用法：
+
+①	默认导出与默认导入
+
+②	按需导出与按需导入
+
+③	直接导入并执行模块中的代码
+
+##### 默认导出
+
+默认导出的语法： export default 默认导出的成员
+
+![image-20230609151529402](../pic/image-20230609151529402.png)
+
+##### 默认导入
+
+默认导入的语法： import 接收名称 from '模块标识符'
+
+![image-20230609151548311](../pic/image-20230609151548311.png)
+
+##### 默认导出的注意事项
+
+每个模块中，只允许使用唯一的一次export default，否则会报错！
+
+![image-20230609151652306](../pic/image-20230609151652306.png)
+
+##### 默认导入的注意事项
+
+默认导入时的接收名称可以任意名称，只要是合法的成员名称即可：
+
+![image-20230609164548002](../pic/image-20230609164548002.png)
+
+##### 按需导出
+
+按需导出的语法： export 按需导出的成员
+
+![image-20230609164632795](../pic/image-20230609164632795.png)
+
+##### 按需导入
+
+按需导入的语法： import { s1 } from '模块标识符'
+
+![image-20230609164646941](../pic/image-20230609164646941.png)
+
+##### 按需导出与按需导入的注意事项
+
+①	每个模块中可以使用多次按需导出
+
+②	按需导入的成员名称必须和按需导出的名称保持一致
+
+③	按需导入时，可以使用 as 关键字进行重命名![image-20230609164709784](../pic/image-20230609164709784.png)
+
+④	按需导入可以和默认导入一起使用
+
+##### 直接导入并执行模块中的代码
+
+如果只想单纯地执行某个模块中的代码，并不需要得到模块中向外共享的成员。此时，可以直接导入并执行模块代码，示例代码如下：
+
+![image-20230609164750591](../pic/image-20230609164750591.png)
+
+### Promise
+
+#### 回调地狱
+
+多层回调函数的相互嵌套，就形成了回调地狱。示例代码如下：
+
+![image-20230609164837344](../pic/image-20230609164837344.png)
+
+回调地狱的缺点：
+
+- 代码耦合性太强，牵一发而动全身，难以维护
+- 大量冗余的代码相互嵌套，代码的可读性变差
+
+##### 如何解决回调地狱的问题
+
+为了解决回调地狱的问题，ES6（ECMAScript 2015）中新增了 Promise 的概念。
+
+##### Promise 的基本概念
+
+①	Promise 是一个构造函数
+
+- 我们可以创建 Promise 的实例const p = new Promise()
+- new 出来的 Promise 实例对象，代表一个异步操作
+
+②	Promise.prototype 上包含一个.then() 方法
+
+- 每一次new Promise() 构造函数得到的实例对象，都可以通过原型链的方式访问到.then() 方法，例如p.then()
+
+③	.then() 方法用来预先指定成功和失败的回调函数
+
+- p.then(成功的回调函数，失败的回调函数)
+- p.then(result => { }, error => { })
+- 调用.then() 方法时，成功的回调函数是必选的、失败的回调函数是可选的
+
+#### 基于回调函数按顺序读取文件内容
+
+![image-20230609171639097](../pic/image-20230609171639097.png)
+
+#### 基于 then-fs 读取文件内容
+
+由于node.js 官方提供的fs 模块仅支持以回调函数的方式读取文件，不支持 Promise 的调用方式。因此，需要先运行如下的命令，安装then-fs 这个第三方包，从而支持我们基于 Promise 的方式读取文件的内容：
+
+![image-20230609171946606](../pic/image-20230609171946606.png)
+
+##### then-fs 的基本使用
+
+调用then-fs 提供的readFile() 方法，可以异步地读取文件的内容，它的返回值是 Promise 的实例对象。因此可以调用.then() 方法为每个 Promise 异步操作指定成功和失败之后的回调函数。示例代码如下：
+
+![image-20230609172216435](../pic/image-20230609172216435.png)
+
+注意：上述的代码无法保证文件的读取顺序(也就是说没有办法保证先读文件1，再读文件2，再读文件3.。。)，需要做进一步的改进！
+
+##### .then() 方法的特性
+
+如果上一个 .then() 方法中返回了一个新的 Promise 实例对象，则可以通过下一个 .then() 继续进行处理。通过 .then() 方法的链式调用，就解决了回调地狱的问题。
+
+##### 基于 Promise 按顺序读取文件的内容
+
+Promise 支持链式调用，从而来解决回调地狱的问题。示例代码如下：
+
+![image-20230609172430223](../pic/image-20230609172430223.png)
+
+解决了回调里面套回调的问题。
+
+##### 通过 .catch 捕获错误
+
+在 Promise 的链式操作中如果发生了错误，可以使用 Promise.prototype.catch 方法进行捕获和处理：
+
+![image-20230609172506260](../pic/image-20230609172506260.png)
+
+如果不希望前面的错误导致后续的 .then 无法正常执行，则可以将 .catch 的调用提前，示例代码如下：
+
+![image-20230609172516288](../pic/image-20230609172516288.png)
+
+##### Promise.all() 方法
+
+Promise.all() 方法会发起并行的 Promise 异步操作，等所有的异步操作全部结束后才会执行下一步的 .then
+操作（等待机制）。示例代码如下：
+
+![image-20230609172533588](../pic/image-20230609172533588.png)
+
+注意：数组中 Promise 实例的顺序，就是最终结果的顺序！
+
+##### Promise.race() 方法
+
+Promise.race() 方法会发起并行的 Promise 异步操作，只要任何一个异步操作完成，就立即执行下一步的.then 操作（赛跑机制）。示例代码如下：
+
+![image-20230609172602812](../pic/image-20230609172602812.png)
+
+#### 基于 Promise 封装读文件的方法
+
+方法的封装要求：
+
+①	方法的名称要定义为getFile
+
+②	方法接收一个形参fpath，表示要读取的文件的路径
+
+③	方法的返回值为 Promise 实例对象
+
+##### getFile 方法的基本定义
+
+![image-20230609172703719](../pic/image-20230609172703719.png)
+
+注意：第 5 行代码中的new Promise() 只是创建了一个形式上的异步操作。
+
+##### 创建具体的异步操作
+
+如果想要创建具体的异步操作，则需要在new Promise() 构造函数期间，传递一个function 函数，将具体的异步操作定义到function 函数内部。示例代码如下：
+
+![image-20230609172811713](../pic/image-20230609172811713.png)
+
+##### 获取 .then 的两个实参
+
+通过.then() 指定的成功和失败的回调函数，可以在function 的形参中进行接收，示例代码如下：
+
+![image-20230609172825353](../pic/image-20230609172825353.png)
+
+##### 调用 resolve 和 reject 回调函数
+
+Promise 异步操作的结果，可以调用resolve 或 reject 回调函数进行处理。示例代码如下：
+
+![image-20230609172841207](../pic/image-20230609172841207.png)
+
+### async/await
+
+#### 什么是 async/await
+
+async/await 是 ES8（ECMAScript 2017）引入的新语法，用来简化 Promise 异步操作。在 async/await 出现之前，开发者只能通过链式.then() 的方式处理 Promise 异步操作。示例代码如下：
+
+![image-20230609172908045](../pic/image-20230609172908045.png)
+
+.then 链式调用的优点：解决了回调地狱的问题
+
+.then 链式调用的缺点：代码冗余、阅读性差、不易理解
+
+#### async/await 的基本使用
+
+使用 async/await 简化 Promise 异步操作的示例代码如下：
+
+![image-20230609172926444](../pic/image-20230609172926444.png)
+
+#### async/await 的使用注意事项
+
+①	如果在function 中使用了 await，则 function 必须被 async 修饰
+
+②	在 async 方法中，第一个 await 之前的代码会同步执行，await 之后的代码会异步执行（也就会退出方法的执行，然后执行主线程后面的代码）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 创建项目
+
 vue create vue-demo
 ![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1684717253109-0f231397-5d27-46ea-9b21-e787865d749f.png#averageHue=%231d1b1b&clientId=uafc785c6-cf24-4&from=paste&height=290&id=u067510d7&originHeight=290&originWidth=541&originalType=binary&ratio=1&rotation=0&showTitle=false&size=16931&status=done&style=none&taskId=u4f3f650b-9c81-41c5-93b3-69bbd0c3e0f&title=&width=541)
 ![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680836039528-8adcc066-b6c4-40cd-b396-25789396c973.png#averageHue=%23242322&clientId=ucd5c7621-c96e-4&from=paste&height=361&id=u2b9902ea&originHeight=451&originWidth=464&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=32087&status=done&style=none&taskId=ue26e2b02-45a7-4bc4-843d-d1414735ef6&title=&width=371.2)
