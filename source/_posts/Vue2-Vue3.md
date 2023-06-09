@@ -509,9 +509,9 @@ MVVM 是 vue 实现数据驱动视图和双向数据绑定的核心原理。MVVM
 
 在 MVVM 概念中：
 
-Model 表示当前页面渲染时所依赖的数据源。
+Model 表示当前页面渲染时所依赖的数据源（也就是数据对象）。
 
-View	表示当前页面所渲染的 DOM 结构。
+View	表示当前页面所渲染的 DOM 结构（页面）。
 
 ViewModel 表示 vue 的实例，它是MVVM 的核心。
 
@@ -538,6 +538,14 @@ ViewModel 作为 MVVM 的核心，是它把当前页面的数据源（Model）�
 #### 基本代码与 MVVM 的对应关系
 
 ![image-20230604192612315](../pic/image-20230604192612315.png)
+
+注意el的value是一个选择器，这里使用了id选择器选择id为app的节点
+
+配置对象，axios的那个语法其实也是配置对象，这个对于任何的这样形式都是适用的：
+
+![image-20230609212539939](../pic/image-20230609212539939.png)
+
+
 
 #### 第一个vue程序
 
@@ -687,7 +695,88 @@ Vue会管理el选项 **命中的元素**及其**内部的后代元素**
 
 ![image-20220507132349381](../pic/image-20220507132349381-16617872850372.png)
 
+### 回顾Object.defineproperty方法
+
+当我们通过控制台访问data里面的属性，在主界面不会立即显示，需要我们手动点击，当我们手动点击这个，就会自动触发getter方法
+
+![image-20230609231725856](../pic/image-20230609231725856.png)
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>回顾Object.defineproperty方法</title>
+	</head>
+	<body>
+		<script type="text/javascript" >
+			let number = 18
+			let person = {
+				name:'张三',
+				sex:'男',
+			}
+
+			Object.defineProperty(person,'age',{
+				// value:18,
+				// enumerable:true, //控制属性是否可以枚举，默认值是false
+				// writable:true, //控制属性是否可以被修改，默认值是false
+				// configurable:true //控制属性是否可以被删除，默认值是false
+
+				//当有人读取person的age属性时，get函数(getter)就会被调用，且返回值就是age的值
+				get(){
+					console.log('有人读取age属性了')
+					return number
+				},
+
+				//当有人修改person的age属性时，set函数(setter)就会被调用，且会收到修改的具体值
+				set(value){
+					console.log('有人修改了age属性，且值是',value)
+					number = value
+				}
+
+			})
+
+			// console.log(Object.keys(person))
+
+			console.log(person)
+		</script>
+	</body>
+</html>
+```
+
+vue里面的数据代理！！！这也是为什么vue把data里面的数据直接提到外面一层，是为了更方便访问属性
+
+![image-20230609233012963](../pic/image-20230609233012963.png)
+
+
+
+​    1.Vue中的数据代理：
+
+​       通过vm对象来代理data对象中属性的操作（读/写）
+
+​    2.Vue中数据代理的好处：
+
+​       更加方便的操作data中的数据
+
+​    3.基本原理：
+
+​       通过Object.defineProperty()把data对象中所有属性添加到vm上。
+
+​       为每一个添加到vm上的属性，都指定一个getter/setter。
+
+​       在getter/setter内部去操作（读/写）data中对应的属性。
+
+
+
 ### vue 的指令
+
+#### js表达式
+
+怎么区分`js表达式`和`js语句(js代码)`的区别
+
+表达式一定会生成一个值！！！无论是函数的调用还是四则运算，都会生成值
+
+![image-20230609214255976](../pic/image-20230609214255976.png)
 
 #### 指令的概念
 
@@ -745,6 +834,10 @@ vue 中的指令按照不同的用途可以分为如下 6 大类：
 
 ##### 插值表达式
 
+在这里面可以写我们创建的Vue对象身上的任何属性，不需要加Vue,也就是说你可以在插值表达式里面通过属性名字访问所有属性，不用加任何前缀
+
+![image-20230609232731303](../pic/image-20230609232731303.png)
+
 ```
 vue 提供的 `{{ }} `语法，专门用来解决v-text 会覆盖默认文本内容的问题。这种 {{ }} 语法的专业名称是插值表达式（英文名为：Mustache）。
 ```
@@ -769,9 +862,11 @@ vue 提供的 `{{ }} `语法，专门用来解决v-text 会覆盖默认文本内
 
 #### 属性绑定指令
 
-如果需要为元素的属性动态绑定属性值，则需要用到v-bind 属性绑定指令。用法示例如下：
+如果需要为元素的属性动态绑定属性值（注意是属性，之前的插值表达式是写到**标签体**里面的，而这个是写到标签的属性上的），则需要用到v-bind 属性绑定指令。用法示例如下：
 
 ##### v-bind指令
+
+加了v-bind指令，引号中的就是一个js表达式了！！！！至于js表达式是什么，在上面提到过！这个必须要注意，用到的有很多
 
 ![image-20220507150348228](../pic/image-20220507150348228-166178728503713.png)
 
@@ -1031,6 +1126,12 @@ vue 提供了v-model 双向数据绑定指令，用来辅助开发者在不操�
 ![image-20230604200539973](../pic/image-20230604200539973.png)
 
 ##### v-model
+
+<font color="red">v-model一般都应用在表单类元素上（input、select这种有value属性的标签上）</font>
+
+
+
+![image-20230609220126204](../pic/image-20230609220126204.png)
 
 简单来说双向绑定就是指修改文本框中的message，也会改变data中的message。
 
@@ -1997,6 +2098,16 @@ vue 规定：开发者可以在 `<script> `节点中封装组件的JavaScript �
 ![image-20230605202215976](../pic/image-20230605202215976.png)
 
 文件为.vue为结尾的， 组件中的 data 必须是函数，而不能是对象
+
+
+
+![image-20230609221144667](../pic/image-20230609221144667.png)
+
+**并且以vue管理的函数，一定不要写箭头函数，要不然会出错，因为箭头函数没有自己的this，框架内部调用会出现错误！！！**
+
+
+
+
 
 vue 规定：.vue 组件中的data 必须是一个函数，不能直接指向一个数据对象。因此在组件中定义data 数据节点时，下面的方式是错误的：
 
@@ -3500,6 +3611,141 @@ async/await 是 ES8（ECMAScript 2017）引入的新语法，用来简化 Promis
 
 ②	在 async 方法中，第一个 await 之前的代码会同步执行，await 之后的代码会异步执行（也就会退出方法的执行，然后执行主线程后面的代码）
 
+![image-20230609180955480](../pic/image-20230609180955480.png)
+
+输出结果：
+
+![image-20230609181005142](../pic/image-20230609181005142.png)
+
+### EventLoop
+
+#### JavaScript 是单线程的语言
+
+JavaScript 是一门单线程执行的编程语言。也就是说，同一时间只能做一件事情。
+
+![image-20230609181025645](../pic/image-20230609181025645.png)
+
+单线程执行任务队列的问题：
+
+如果前一个任务非常耗时，则后续的任务就不得不一直等待，从而导致程序假死的问题。
+
+#### 同步任务和异步任务
+
+为了防止某个耗时任务导致程序假死的问题，JavaScript 把待执行的任务分为了两类：
+
+①	同步任务（synchronous）
+
+- 又叫做非耗时任务，指的是在主线程上排队执行的那些任务
+- 只有前一个任务执行完毕，才能执行后一个任务
+
+②	异步任务（asynchronous）
+
+- 又叫做耗时任务，异步任务由 JavaScript 委托给宿主环境（浏览器/node）进行执行
+- 当异步任务执行完成后，会通知 JavaScript 主线程执行异步任务的回调函数
+
+#### 同步任务和异步任务的执行过程
+
+![image-20230609181229572](../pic/image-20230609181229572.png)
+
+①	同步任务由 JavaScript 主线程次序执行
+
+②	异步任务委托给宿主环境执行
+
+③	已完成的异步任务对应的回调函数，会被加入到任务队列中等待执行
+
+④	JavaScript 主线程的执行栈被清空后，会读取任务队列中的回调函数，次序执行
+
+⑤	JavaScript 主线程不断重复上面的第 4 步
+
+#### EventLoop 的基本概念
+
+JavaScript 主线程从“任务队列”中读取异步任务的回调函数，放到执行栈中依次执行。这个过程是循环不断的，所以整个的这种运行机制又称为EventLoop（事件循环）。
+
+#### 结合 EventLoop 分析输出的顺序
+
+![image-20230609181345531](../pic/image-20230609181345531.png)
+
+正确的输出结果：ADCB。其中：
+
+- A 和 D 属于同步任务。会根据代码的先后顺序依次被执行
+- C 和 B 属于异步任务。它们的回调函数会被加入到任务队列中，等待主线程空闲时再执行
+
+### 宏任务和微任务
+
+#### 什么是宏任务和微任务
+
+JavaScript 把异步任务又做了进一步的划分，异步任务又分为两类，分别是：
+
+①	宏任务（macrotask）
+
+- 异步Ajax 请求、
+- setTimeout、setInterval、
+- 文件操作
+- 其它宏任务
+
+②	微任务（microtask）
+
+- Promise.then、.catch 和 .finally
+- process.nextTick
+- 其它微任务
+
+![image-20230609181609414](../pic/image-20230609181609414.png)
+
+#### 宏任务和微任务的执行顺序
+
+![image-20230609181623047](../pic/image-20230609181623047.png)
+
+每一个宏任务执行完之后，都会检查是否存在待执行的微任务，如果有，则执行完所有微任务之后，再继续执行下一个宏任务。
+
+#### 去银行办业务的场景
+
+①	小云和小腾去银行办业务。首先，需要取号之后进行排队
+
+- 宏任务队列
+
+②	假设当前银行网点只有一个柜员，小云在办理存款业务时，小腾只能等待
+
+- 单线程，宏任务按次序执行
+
+③	小云办完存款业务后，柜员询问他是否还想办理其它业务？
+
+- 当前宏任务执行完，检查是否有微任务
+
+④	小云告诉柜员：想要买理财产品、再办个信用卡、最后再兑换点马年纪念币？
+
+- 执行微任务，后续宏任务被推迟
+
+⑤	小云离开柜台后，柜员开始为小腾办理业务
+
+- 所有微任务执行完毕，开始执行下一个宏任务
+
+#### 分析以下代码输出的顺序
+
+![image-20230609184633274](../pic/image-20230609184633274.png)
+
+正确的输出顺序是：2431
+
+分析：
+
+①	先执行所有的同步任务
+
+- 执行第 6 行、第 12 行代码
+
+②	再执行微任务
+
+- 执行第 9 行代码
+
+③	再执行下一个宏任务
+
+- 执行第 2 行代码
+
+#### 经典面试题
+
+请分析以下代码输出的顺序（代码较长，截取成了左中右 3 个部分） ：
+
+**![image-20230609184755880](../pic/image-20230609184755880.png)**
+
+正确的输出顺序是：156234789
 
 
 
@@ -3524,173 +3770,186 @@ async/await 是 ES8（ECMAScript 2017）引入的新语法，用来简化 Promis
 
 
 
-创建项目
-
-vue create vue-demo
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1684717253109-0f231397-5d27-46ea-9b21-e787865d749f.png#averageHue=%231d1b1b&clientId=uafc785c6-cf24-4&from=paste&height=290&id=u067510d7&originHeight=290&originWidth=541&originalType=binary&ratio=1&rotation=0&showTitle=false&size=16931&status=done&style=none&taskId=u4f3f650b-9c81-41c5-93b3-69bbd0c3e0f&title=&width=541)
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680836039528-8adcc066-b6c4-40cd-b396-25789396c973.png#averageHue=%23242322&clientId=ucd5c7621-c96e-4&from=paste&height=361&id=u2b9902ea&originHeight=451&originWidth=464&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=32087&status=done&style=none&taskId=ue26e2b02-45a7-4bc4-843d-d1414735ef6&title=&width=371.2)
-选项
-然后安装
-运行：
-
-1. 先进入你要的目录 cd vue-demo
-2. npm run serve
-
-或者根据![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680836236976-3c13cace-f0ee-419a-a95a-96101dd4eeb6.png#averageHue=%23222120&clientId=ucd5c7621-c96e-4&from=paste&height=93&id=u367fd81e&originHeight=116&originWidth=385&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=4919&status=done&style=none&taskId=u5c22a8a9-717f-4944-8b33-c4a327255e4&title=&width=308)
-
-然后生成这个
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680836326374-208d155d-f49d-4abb-8daa-7761a7b4c375.png#averageHue=%2327282a&clientId=ucd5c7621-c96e-4&from=paste&height=387&id=u17321ee3&originHeight=484&originWidth=303&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=25117&status=done&style=none&taskId=u0ca7969c-5d34-4b1b-b188-411e1ad078f&title=&width=242.4)
 
 
-## 组件模板
 
-components
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680837806744-b336898c-bbee-49a7-928a-887d1e61500b.png#averageHue=%2390a76f&clientId=ucd5c7621-c96e-4&from=paste&height=491&id=u8d25687d&originHeight=614&originWidth=947&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=50652&status=done&style=none&taskId=u918d01d1-a9d9-489e-9768-0213e3eaefd&title=&width=757.6)
-可以自定义组件
-那么如何引入组件呢？
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680838148926-39df8494-c33a-49fb-97d0-aa65e3a2ceeb.png#averageHue=%23969e5e&clientId=ucd5c7621-c96e-4&from=paste&height=619&id=u04327dd1&originHeight=774&originWidth=1161&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=113322&status=done&style=none&taskId=u6e96e8fa-18e8-4c2e-9ff7-7366e3207b6&title=&width=928.8)
-这样就可以引入啦
-还可以这样写
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680838334825-17b6b003-b295-4551-9780-b704f0199538.png#averageHue=%23201f1f&clientId=ucd5c7621-c96e-4&from=paste&height=306&id=uc8f950dc&originHeight=383&originWidth=752&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=37412&status=done&style=none&taskId=u8dec4867-7c3e-4fc1-a3ac-2f4b1e31ddc&title=&width=601.6)
-需要注意的是：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680838376614-43ad75a2-3817-445b-986a-1d3c77559d45.png#averageHue=%231f1e1e&clientId=ucd5c7621-c96e-4&from=paste&height=106&id=u0303a6d4&originHeight=133&originWidth=651&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=37142&status=done&style=none&taskId=u308b268e-9e19-40f1-97f9-fb0e0f15265&title=&width=520.8)
-组件树！
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680838493397-fa730c44-0464-49fe-ac0c-c0cd65355783.png#averageHue=%23ddccc5&clientId=ucd5c7621-c96e-4&from=paste&height=189&id=uff245393&originHeight=236&originWidth=594&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=62550&status=done&style=none&taskId=uc31b1070-e57b-495b-a886-5e00ffe8fa5&title=&width=475.2)
 
-## Props组件交互
 
-组件交互其实就是组件之间可以进行数据传输，起到一个数据公共的情况
 
-**实现组件交互**
-文件结构：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680839551334-20faa479-f467-4c81-b63f-7d972f9b8e88.png#averageHue=%2328282b&clientId=ucd5c7621-c96e-4&from=paste&height=107&id=u4259b63a&originHeight=134&originWidth=302&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=8903&status=done&style=none&taskId=u9e77f352-5680-4163-8ca2-c02bd35524c&title=&width=241.6)
-代码：
 
-```vue
-<template>
-  <!-- title是传过去的参数的key，t是本页面的属性，不过最好写一样 -->
-  <Prop :title="t" :age="a" :names="names"/>
-</template>
 
-<script>
-import Prop from './components/Prop'
-export default {
-  name: 'App',
-  data(){
-    return{
-      t:"t标题在这",
-      a:20,
-      names:["haohao","yaoyao"]
-    }
-  },
-  components:{
-    Prop
-  }
-}
-</script>
-```
 
-```vue
-<template>
-    <h1>{{ title }}</h1>
-    <h1>{{ age }}</h1>
-    <h1>{{ names }}</h1>
-</template>
-<script>
-export default{
-props:{
-    title:{
-        type:String,
-        default:"hahh"
-    },
-    age:{
-        type:Number,
-        default:0
-    },
-    names:{
-        type:Array,
-        //数组和对象需要使用函数来进行返回
-        default:function(){
-            return []
-        }
-    }
-}
-}
-</script>
-```
 
-页面效果：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680839634108-40a10bfc-eac1-462c-b637-46bf31d3a3a6.png#averageHue=%23fefefe&clientId=ucd5c7621-c96e-4&from=paste&height=738&id=u82de899a&originHeight=923&originWidth=857&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=29887&status=done&style=none&taskId=udfda0a01-1f89-412f-8f4f-5ce09fc301a&title=&width=685.6)
 
-## 自定义事件的组件交互
 
-自定义事件可以在组件中反向传递数据，`prop`可以将数据从父组件传递到子组件，那么反向如何操作呢?答案是：可以利用自定义事件实现`$emit`
-现在是`从工具人向老板传递数据`
 
-```vue
-<template>
-  <!-- 需要注意的是 getData是下面的方法，不能加括号-->
-  <!--并且这个haohaoEvent要注意相对应-->
-  <Prop @haohaoEvent="getData"></Prop>
-  <h1>{{ mess }}</h1>
-</template>
 
-<script>
-import Prop from './components/Prop'
-export default {
-  name: 'App',
-  data(){
-    return{
-      mess:""
-    }
-  },
-  components:{
-    Prop
-  },
-  methods:{
-    getData(data){
-      this.mess=data;
-    }
-  }
-}
-</script>
-```
 
-```vue
-<template>
-  <!-- 需要注意的是 sendData是下面的方法，不能加括号-->
-    <button @click="sendData">必须要点击才能发送数据</button>
-</template>
-<script>
-export default{
-    data(){
-        return{
-            mess:"我是传输过来的数据"
-        }
-    },
-    methods:{
-        sendData(){
-            //参数1：字符串，理论上是随便的，但是需要有对应关系
-            //参数2，传递的数据
-            //这里的$emit是固定的
-            this.$emit("haohaoEvent",this.mess)
-        }
-    }
-}
-</script>
-```
 
-效果：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680844367626-0c538872-0edb-4794-af03-6951427fd1e2.png#averageHue=%23fefdfd&clientId=ucd5c7621-c96e-4&from=paste&height=302&id=u1b1d9192&originHeight=377&originWidth=822&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=18550&status=done&style=none&taskId=u6d8ea738-05d6-49b8-bf63-1745dac99e0&title=&width=657.6)
-点击按钮后
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680844378370-36af3a85-e3de-4990-b7c2-c2f247b6f3db.png#averageHue=%23fdfdfc&clientId=ucd5c7621-c96e-4&from=paste&height=346&id=uffc5b3dc&originHeight=432&originWidth=531&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=28849&status=done&style=none&taskId=ua12bdb91-1b8a-4256-9e4b-a9cdd113e13&title=&width=424.8)
 
-## 组件生命周期
 
-每个组件在创建时都要经过一系列的初始化过程，在这个过程中会运行一些叫做**生命周期钩子**的函数，这给了用户在不同阶段添加自己的代码的机会。
-一共有八个生命周期钩子函数...之前用到过
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680846189071-f4763043-dde5-4c85-a6a7-29436ebb5eaf.png#averageHue=%23f9f5f3&clientId=ucd5c7621-c96e-4&from=paste&height=134&id=ud6eec86f&originHeight=168&originWidth=224&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=30669&status=done&style=none&taskId=u6e8fbf30-d9db-4537-9965-80552e841b4&title=&width=179.2)
-网络请求就放到mounted就行了。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Vue引入第三方
 
@@ -3731,501 +3990,6 @@ export default{
 }
 </script>
 ```
-
-## 在Vue中使用axios
-
-首先切换到你的vue项目中安装axios`npm install --save axios`
-如果报错试试	`npm install --save axios --location=global`
-
-### get请求
-
-```vue
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
- <h1>{{ data.title }}</h1>
-</template>
-
-
-<script>
-
-
-import axios from "axios"
-
-
-export default {
-  name: 'App',
-  data(){
-    return{
-      data:{}
-    }
-  },
-
-
-  mounted(){
-    axios({
-      //get请求....
-      method:"get",
-      url:"http://iwenwiki.com/api/blueberrypai/getChengpinDetails.php"
-    }).then(res=>{
-
-
-      this.data=res.data.chengpinDetails[0]
-    })
-  }
-}
-</script>
-
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
-```
-
-效果：![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680848949538-19e218c6-5a7e-4755-889f-c682537ab03a.png#averageHue=%23fefefe&clientId=ucd5c7621-c96e-4&from=paste&height=306&id=ue08f3a1b&originHeight=383&originWidth=1229&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=38533&status=done&style=none&taskId=u931efef2-cd12-4235-882a-0e4e2be5650&title=&width=983.2)
-
-### Post请求
-
-先安装转换字符串格式的东西`cnpm install --save querystring`
-
-```vue
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-</template>
-
-
-<script>
-
-
-import axios from "axios"
-import querystring from "querystring"
-
-
-export default {
-  name: 'App',
-  data(){
-    return{
-      data:{}
-    }
-  },
-
-
-  mounted(){
-    axios({
-      method:"post",
-      url:"http://iwenwiki.com/api/blueberrypai/login.php",
-      data:querystring.stringify({
-        user_id:"iwen@qq.com",
-        password:"iwen123",
-        verification_code:"crfvw"
-      })
-    }).then(res=>{
-      console.log(res.data)
-    })
-  }
-}
-</script>
-
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
-```
-
-得到结果
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680849385274-30b8b977-d861-4915-9c39-6727988a2b90.png#averageHue=%23cbd1ad&clientId=ucd5c7621-c96e-4&from=paste&height=746&id=u79ff1dec&originHeight=933&originWidth=1048&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=84789&status=done&style=none&taskId=u13389b6c-75ae-49e3-a404-2fbb6a8e458&title=&width=838.4)
-
-### 简化方式
-
-```vue
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-</template>
-
-<script>
-  import axios from "axios"
-  import querystring from "querystring"
-  
-  
-  export default {
-    name: 'App',
-    data(){
-      return{
-        data:{}
-      }
-    },
-  
-  
-    mounted(){
-      axios.get("http://iwenwiki.com/api/blueberrypai/getChengpinDetails.php")
-      .then(res=>{
-        console.log(res);
-      })
-      axios.post("http://iwenwiki.com/api/blueberrypai/login.php",querystring.stringify({
-        user_id:"iwen@qq.com",
-          password:"iwen123",
-          verification_code:"crfvw"
-      })).then(res=>{
-        console.log(res)
-      })
-    }
-  }
-</script>
-
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
-```
-
-### 全局引入axios
-
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680849934170-a507e121-1805-45cb-bb3b-41d202363f34.png#averageHue=%2391a863&clientId=ucd5c7621-c96e-4&from=paste&height=551&id=u1ad39a3b&originHeight=689&originWidth=1000&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=78339&status=done&style=none&taskId=u1ded18e8-1a0f-4bea-9f8c-f4510847b63&title=&width=800)
-之后就可以这样调用了：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680849960065-4694ea06-ee62-4184-ba2c-08f8d55a6cc1.png#averageHue=%2321201f&clientId=ucd5c7621-c96e-4&from=paste&height=275&id=ue87d0fa2&originHeight=344&originWidth=992&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=40543&status=done&style=none&taskId=ufa693265-39af-4ff5-ab14-36450acbef0&title=&width=793.6)
-具体是为啥老师也没讲
-
-### Axios网络请求封装
-
-把网络请求进行封装，更好找，有利于维护
-用到的目录结构
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680852854797-cf53995f-170d-473c-89ff-b04251be023c.png#averageHue=%23262728&clientId=ucd5c7621-c96e-4&from=paste&height=380&id=ue268a7eb&originHeight=475&originWidth=331&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=22781&status=done&style=none&taskId=u30e19cca-39ae-411c-a614-9974aae9600&title=&width=264.8)
-代码:
-
-```javascript
-import axios from 'axios'
-import querystring from "querystring"
-
-
-//instance1 是一个 axios 实例化对象，通过调用 create() 方法创建，可以设置一些请求的配置项，比如超时时间。
-const instance1=axios.create({
-    //设置超时时间
-    timeout:5000
-})
-
-
-
-//通过 interceptors 对象，
-//我们可以在数据发送前和数据接收后对数据进行一些拦截和处理操作，比如将 post 请求的数据格式转化为 querystring 格式，
-//或者在返回结果时判断返回状态码是否为 200。
-
-
-//发送数据之前
-instance1.interceptors.request.use(
-    config=>{
-        if(config.method==="post"){
-            config.data=querystring.stringify(config.data)
-        }
-        //config中包含着网络请求的所有信息
-        return config;
-    },
-    error=>{
-        return Promise.reject(error)
-    }
-)
-instance1.interceptors.response.use(
-    response=>{
-        return response.status===200?Promise.resolve(response):Promise.reject(response);
-    },
-    error=>{
-        console.log("error")
-    }
-)
-
-
-//通过 export default 将 instance1 对象导出供其他模块使用。
-export default instance1;
-```
-
-```javascript
-const base={
-    baseUrl:"http://iwenwiki.com",
-    chengpin:"/api/blueberrypai/getChengpinDetails.php"
-}
-//导出base
-export default base;
-```
-
-```javascript
-import axios from "../utils/request"
-import path from "./path"
-const api={
-   getChengpin(){
-    return axios.get(path.baseUrl+path.chengpin);
-   } 
-}
-export default api;
-```
-
-```vue
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-</template>
-
-
-<script>
-
-
-
-import api from "./api/index"
-export default {
-  name: 'App',
-  mounted(){
-    api.getChengpin().then(res=>{
-      console.log(res.data)
-    })
-  }
-}
-</script>
-
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
-```
-
-结果：![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680852946189-494614ad-835b-4537-8c0e-7f0845529517.png#averageHue=%236099b0&clientId=ucd5c7621-c96e-4&from=paste&height=116&id=uf2117d97&originHeight=145&originWidth=1748&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=24883&status=done&style=none&taskId=ud66fb18e-4565-4206-9ad9-4534df9f377&title=&width=1398.4)
-
-## 路由
-
-通过路由的方式**管理页面之间的关系**
-**Vue Router是Vue的官方路由！**
-安装路由！`cnpm install --save vue-router`
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680854953537-aebb8038-01fa-4ca3-a78d-4c6dad88f718.png#averageHue=%23262628&clientId=ucd5c7621-c96e-4&from=paste&height=418&id=u03eb3bd3&originHeight=522&originWidth=312&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=32216&status=done&style=none&taskId=uf22e3405-a6e8-466e-9b3e-704d2398f34&title=&width=249.6)
-其中不用新创建的是App.vue和main.js
-
-```vue
-<template>
-    <h1>首页</h1>
-</template>
-```
-
-```vue
-<template>
-    <h1>about页面</h1>
-</template>
-```
-
-```javascript
-import {createRouter,createWebHashHistory} from 'vue-router'
-import HomeView from "../views/HomeView"
-import AboutView from "../views/AboutView"
-
-
-const routes=[
-    {
-        path:"/",
-        component:HomeView
-    },
-    {
-        path:"/about",
-        // component:AboutView
-        // 也可以下面这样写
-        // 这样的是异步加载的方式，性能比较好
-        component:()=>import('../views/AboutView.vue')
-    }
-]
-const router=createRouter({
-    history:createWebHashHistory(),
-    routes
-})
-//导出
-export default router;
-```
-
-```javascript
-import { createApp } from 'vue'
-import App from './App.vue'
-import './registerServiceWorker'
-import axios from "axios"
-import router from "./router"
-
-
-
-
-const app=createApp(App)
-//再主入口用路由，用.use的方式明确路由功能,
-//这里添加的只有两句，一句是下面这个，一句是上面的import语句
-app.use(router)
-app.config.globalProperties.$axios=axios
-app.mount('#app')
-```
-
-```vue
-<template>
-  <router-link to="/">首页</router-link>
-  <br/>
-  <router-link to="/about">about</router-link>
-
-
-  <!-- 路由的样式就在这里显示 -->
-  <router-view></router-view>
-</template>
-
-
-<script>
-// 这里啥都可以不写哈哈哈哈
-
-export default {
-}
-</script>
-```
-
-需要注意的是：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1680855218202-a862fefe-213b-475c-9fee-e4093743d2bd.png#averageHue=%231f1f1f&clientId=ucd5c7621-c96e-4&from=paste&height=284&id=u22c61436&originHeight=355&originWidth=449&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=92990&status=done&style=none&taskId=u139b7646-4c7a-4c71-8205-94604a40905&title=&width=359.2)
-
-## 路由传递参数
-
-目录结构：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681097373867-6ad019e8-9959-4ec5-a020-7c392461449f.png#averageHue=%234a8495&clientId=u42739be6-37cf-4&from=paste&height=487&id=u9a1efcf5&originHeight=609&originWidth=416&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=35699&status=done&style=none&taskId=u464aecc6-858b-4e84-b074-deae9abd3b6&title=&width=332.8)
-代码实现：
-
-```javascript
-import {createRouter,createWebHashHistory} from 'vue-router'
-const routes=[ 
-    //第一步，在路由配置种指定参数的key，注意这个name和后面详情页的name相对应
-    {
-        path:"/list/:name",
-        name:"list",
-        component:()=>import("../views/NewsView.vue")
-    }
-]
-const router=createRouter({
-    history:createWebHashHistory(),
-    routes
-})
-//导出
-export default router;
-```
-
-```vue
-<!-- 第二步：在跳转过程中携带参数 -->
-<template>
-    <li><router-link to="/list/网易新闻">网易新闻</router-link></li>
-    <li><router-link to="/list/百度新闻">百度新闻</router-link></li>
-    <li><router-link to="/list/阿里新闻">阿里新闻</router-link></li>
-  <!-- 路由的样式就在这里显示 -->
-  <router-view></router-view>
-</template>
-
-
-<script>
-
-
-export default {
-}
-</script>
-```
-
-```vue
-<!-- 第三步：在详情页中获取数据 -->
-<template>
-    <h1>{{ $route.params.name }}</h1>
-</template>
-```
-
-效果：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681097508140-fcd07bc7-e8ae-423d-8b26-864ae0d74d87.png#averageHue=%23f4f3f3&clientId=u42739be6-37cf-4&from=paste&height=209&id=u7362454a&originHeight=261&originWidth=323&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=9380&status=done&style=none&taskId=u3b6ebd6b-19f8-4581-8ce7-02fbf691687&title=&width=258.4)
-
-## 嵌套路由配置
-
-嵌套路由就是这玩意：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681097580912-2c8730e8-e7a0-480b-973d-938807d67f18.png#averageHue=%23fbfbf9&clientId=u42739be6-37cf-4&from=paste&height=418&id=u53fbcb61&originHeight=522&originWidth=981&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=204692&status=done&style=none&taskId=ud58fcf2f-7ff1-485d-b8fe-65af17b954c&title=&width=784.8)
-目录结构：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681099034436-57863ead-71b7-4517-9757-cbeb04009cd5.png#averageHue=%2325282b&clientId=u42739be6-37cf-4&from=paste&height=566&id=u64b16ff2&originHeight=707&originWidth=377&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=37672&status=done&style=none&taskId=u6a012028-a35c-4dea-a752-7d9f072bba9&title=&width=301.6)
-
-```vue
-<template>
-	<router-link to="/list">新闻</router-link>
-  <!-- 路由的样式就在这里显示 -->
-  <router-view></router-view>
-</template>
-<script>
-export default {
-}
-</script>
-```
-
-```vue
-<template>
-    <router-link to="/list/news1">news1</router-link>|
-    <router-link to="/list/news2">news2</router-link>
-    <router-view></router-view>
-</template>
-```
-
-```javascript
-import {createRouter,createWebHashHistory} from 'vue-router'
-const routes=[ 
-    {
-        path:"/list",
-        name:"list",
-        component:()=>import("../views/NewsView.vue"),
-        //重定向，默认访问子页面的哪个路由
-        redirect:"/list/news1",
-        children:[
-            {
-                //注意这个不是文件名称，不要加杠
-                path:"news1",
-                component:()=>import("../views/BaiduNews/News1.vue"),
-            },    
-            {
-                //注意这个不是文件名称
-                path:"news2",
-                component:()=>import("../views/BaiduNews/News2.vue"),
-            }
-        ]
-    }
-]
-const router=createRouter({
-    history:createWebHashHistory(),
-    routes
-})
-//导出
-export default router;
-```
-
-```vue
-<template>
-    <h1>news1</h1>
-</template>
-```
-
-```vue
-<template>
-    <h1>news2</h1>
-</template>
-```
-
-页面效果：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681099274256-20de1f4d-3ce1-411b-b93b-8c6431d2a607.png#averageHue=%23d2bb90&clientId=u42739be6-37cf-4&from=paste&height=258&id=u1c83fdd9&originHeight=323&originWidth=792&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=15286&status=done&style=none&taskId=uecd71b4c-1598-47fa-8d33-775cca4e3e4&title=&width=633.6)
 
 ## Vue状态管理（Vuex）
 
@@ -4489,6 +4253,7 @@ export default {
 ### 完整引用
 
 这种方式的特点就是文件大小会比较大
+
 在main.js中引入：
 
 ```javascript
