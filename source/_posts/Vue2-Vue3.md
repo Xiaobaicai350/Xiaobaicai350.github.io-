@@ -3050,7 +3050,40 @@ vue-cli 是 npm 上的一个全局包，使用 npm install 命令，即可方便
 
 此外，关于el挂载点，还有一种书写方式，名叫：`$mount('')`
 
-![image-20230605200943820](../pic/image-20230605200943820.png)
+![image-20230605200943820](../pic/image-20230605200943820.png) 
+
+对于render函数的理解：
+
+### 脚手架文件结构
+
+	├── node_modules 
+	├── public
+	│   ├── favicon.ico: 页签图标
+	│   └── index.html: 主页面
+	├── src
+	│   ├── assets: 存放静态资源
+	│   │   └── logo.png
+	│   │── component: 存放组件
+	│   │   └── HelloWorld.vue
+	│   │── App.vue: 汇总所有组件
+	│   │── main.js: 入口文件
+	├── .gitignore: git版本管制忽略的配置
+	├── babel.config.js: babel的配置文件
+	├── package.json: 应用包配置文件 
+	├── README.md: 应用描述文件
+	├── package-lock.json：包版本控制文件
+
+### 关于不同版本的Vue
+
+1. vue.js与vue.runtime.xxx.js的区别：
+    1. vue.js是完整版的Vue，包含：核心功能 + 模板解析器。
+    2. vue.runtime.xxx.js是运行版的Vue，只包含：核心功能；没有模板解析器。
+2. 因为vue.runtime.xxx.js没有模板解析器，所以不能使用template这个配置项，需要使用render函数接收到的createElement函数去指定具体内容。
+
+### vue.config.js配置文件
+
+1. 使用vue inspect > output.js可以查看到Vue脚手架的默认配置。
+2. 使用vue.config.js可以对脚手架进行个性化定制，详情见：https://cli.vuejs.org/zh
 
 ### vue 组件
 
@@ -3371,6 +3404,191 @@ Left.vue
 
 这个玩意可以修改组件库的样式，等到后面用到了我再回来填坑。。。
 
+#### 组件的构造函数
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>VueComponent</title>
+		<script type="text/javascript" src="../js/vue.js"></script>
+	</head>
+	<body>
+		<!-- 
+			关于VueComponent：
+						1.school组件本质是一个名为VueComponent的构造函数，且不是程序员定义的，是Vue.extend生成的。
+
+						2.我们只需要写<school/>或<school></school>，Vue解析时会帮我们创建school组件的实例对象，
+							即Vue帮我们执行的：new VueComponent(options)。
+
+						3.特别注意：每次调用Vue.extend，返回的都是一个全新的VueComponent！！！！
+
+						4.关于this指向：
+								(1).组件配置中：
+											data函数、methods中的函数、watch中的函数、computed中的函数 它们的this均是【VueComponent实例对象】。
+								(2).new Vue(options)配置中：
+											data函数、methods中的函数、watch中的函数、computed中的函数 它们的this均是【Vue实例对象】。
+
+						5.VueComponent的实例对象，以后简称vc（也可称之为：组件实例对象）。
+							Vue的实例对象，以后简称vm。
+		-->
+		<!-- 准备好一个容器-->
+		<div id="root">
+			<school></school>
+			<hello></hello>
+		</div>
+	</body>
+
+	<script type="text/javascript">
+		Vue.config.productionTip = false
+		
+		//定义school组件
+		const school = Vue.extend({
+			name:'school',
+			template:`
+				<div>
+					<h2>学校名称：{{name}}</h2>	
+					<h2>学校地址：{{address}}</h2>	
+					<button @click="showName">点我提示学校名</button>
+				</div>
+			`,
+			data(){
+				return {
+					name:'尚硅谷',
+					address:'北京'
+				}
+			},
+			methods: {
+				showName(){
+					console.log('showName',this)
+				}
+			},
+		})
+
+		const test = Vue.extend({
+			template:`<span>atguigu</span>`
+		})
+
+		//定义hello组件
+		const hello = Vue.extend({
+			template:`
+				<div>
+					<h2>{{msg}}</h2>
+					<test></test>	
+				</div>
+			`,
+			data(){
+				return {
+					msg:'你好啊！'
+				}
+			},
+			components:{test}
+		})
+
+
+		// console.log('@',school)
+		// console.log('#',hello)
+
+		//创建vm
+		const vm = new Vue({
+			el:'#root',
+			components:{school,hello}
+		})
+	</script>
+</html>
+```
+
+
+
+
+
+#### Vue和VueComponent的内置关系
+
+```vue
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>一个重要的内置关系</title>
+		<!-- 引入Vue -->
+		<script type="text/javascript" src="../js/vue.js"></script>
+	</head>
+	<body>
+		<!-- 
+				1.一个重要的内置关系：VueComponent.prototype.__proto__ === Vue.prototype
+				2.为什么要有这个关系：让组件实例对象（vc）可以访问到 Vue原型上的属性、方法。
+		-->
+		<!-- 准备好一个容器-->
+		<div id="root">
+			<school></school>
+		</div>
+	</body>
+
+	<script type="text/javascript">
+		Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+		Vue.prototype.x = 99
+
+		//定义school组件
+		const school = Vue.extend({
+			name:'school',
+			template:`
+				<div>
+					<h2>学校名称：{{name}}</h2>	
+					<h2>学校地址：{{address}}</h2>	
+					<button @click="showX">点我输出x</button>
+				</div>
+			`,
+			data(){
+				return {
+					name:'尚硅谷',
+					address:'北京'
+				}
+			},
+			methods: {
+				showX(){
+					console.log(this.x)
+				}
+			},
+		})
+
+		//创建一个vm
+		const vm = new Vue({
+			el:'#root',
+			data:{
+				msg:'你好'
+			},
+			components:{school}
+		})
+
+		
+		//定义一个构造函数
+		/* function Demo(){
+			this.a = 1
+			this.b = 2
+		}
+		//创建一个Demo的实例对象
+		const d = new Demo()
+
+		console.log(Demo.prototype) //显示原型属性
+
+		console.log(d.__proto__) //隐式原型属性
+
+		console.log(Demo.prototype === d.__proto__)
+
+		//程序员通过显示原型属性操作原型对象，追加一个x属性，值为99
+		Demo.prototype.x = 99
+
+		console.log('@',d) */
+
+	</script>
+</html>
+```
+
+
+
+![image-20230611191648869](../pic/image-20230611191648869.png)
+
 ## 生命周期
 
 - 生命周期（Life Cycle）是指一个组件从创建 -> 运行-> 销毁的整个阶段，强调的是一个时间段。
@@ -3657,7 +3875,9 @@ mounted在页面渲染完成之后使用，也就是此时页面已完全取出V
 
 子组件向父组件共享数据使用自定义事件。示例代码如下：
 
-![image-20230607123214992](../pic/image-20230607123214992.png)![image-20230607123217772](../pic/image-20230607123217772.png)
+![image-20230607123214992](../pic/image-20230607123214992.png)
+
+![image-20230607123217772](../pic/image-20230607123217772.png)
 
 ### 兄弟组件之间的数据共享
 
@@ -3674,6 +3894,10 @@ EventBus 的使用步骤
 ## ref 引用
 
 ### 什么是 ref 引用
+
+ref应用在html标签上获取的是真实DOM元素，应用在组件标签上是组件实例对象（vc）
+
+
 
 ref 用来辅助开发者在不依赖于jQuery 的情况下，获取DOM 元素或组件的引用。
 
@@ -3774,6 +3998,187 @@ keep-alive标签还有一个exclude属性来标识不缓存哪个组件，用法
 还有一点是这个include属性里面填的是组件的名称，是在这里定义的
 
 ![image-20230607214630107](../pic/image-20230607214630107.png)
+
+## mixin(混入)
+
+说简单点混入的作用就是复用代码
+
+1. 功能：可以把多个组件共用的配置提取成一个混入对象
+
+2. 使用方式：
+
+    第一步定义混合：
+
+    ```
+    {
+        data(){....},
+        methods:{....}
+        ....
+    }
+    ```
+
+    第二步使用混入：
+
+     全局混入：```Vue.mixin(xxx)```
+     局部混入：```mixins:['xxx']  ```
+
+
+
+第一步：定义混合：
+
+下面是mixin.js的代码
+
+```js
+export const hunhe = {
+	methods: {
+		showName(){
+			alert(this.name)
+		}
+	},
+	mounted() {
+		console.log('你好啊！')
+	},
+}
+export const hunhe2 = {
+	data() {
+		return {
+			x:100,
+			y:200
+		}
+	},
+}
+```
+
+第二步：下面使用mixin
+
+```vue
+<template>
+	<div>
+		<h2 @click="showName">学校名称：{{name}}</h2>
+		<h2>学校地址：{{address}}</h2>
+	</div>
+</template>
+
+<script>
+	//引入mixin
+	 import {hunhe,hunhe2} from '../mixin'
+
+	export default {
+		name:'School',
+		data() {
+			return {
+				name:'尚硅谷',
+				address:'北京',
+				x:666
+			}
+		},
+		 mixins:[hunhe,hunhe2],
+	}
+</script>
+```
+
+或者使用全局引入
+
+![image-20230611215057707](../pic/image-20230611215057707.png)
+
+不过需要注意的是，如果在mixin文件里面服用了生命周期函数，但是你在引用的组件里面仍然编写了生命周期函数，这两个不会发生覆盖，这两个都会执行。。。但是如果是普通的函数或者属性的话，以你引用的组件里面的为准
+
+## 自定义插件
+
+1. 功能：用于增强Vue
+
+2. 本质：包含install方法的一个对象，install的第一个参数是Vue，第二个以后的参数是插件使用者传递的数据。
+
+3. 定义插件：
+
+    ```js
+    对象.install = function (Vue, options) {
+        // 1. 添加全局过滤器
+        Vue.filter(....)
+    
+        // 2. 添加全局指令
+        Vue.directive(....)
+    
+        // 3. 配置全局混入(合)
+        Vue.mixin(....)
+    
+        // 4. 添加实例方法
+        Vue.prototype.$myMethod = function () {...}
+        Vue.prototype.$myProperty = xxxx
+    }
+    ```
+
+
+
+示例：
+
+第一步：定义插件
+
+plugins.js ，里面的内容就是我们要实现的功能
+
+```js
+export default {
+	install(Vue,x,y,z){
+		console.log(x,y,z)
+		//全局过滤器
+		Vue.filter('mySlice',function(value){
+			return value.slice(0,4)
+		})
+
+		//定义全局指令
+		Vue.directive('fbind',{
+			//指令与元素成功绑定时（一上来）
+			bind(element,binding){
+				element.value = binding.value
+			},
+			//指令所在元素被插入页面时
+			inserted(element,binding){
+				element.focus()
+			},
+			//指令所在的模板被重新解析时
+			update(element,binding){
+				element.value = binding.value
+			}
+		})
+
+		//定义混入
+		Vue.mixin({
+			data() {
+				return {
+					x:100,
+					y:200
+				}
+			},
+		})
+
+		//给Vue原型上添加一个方法（vm和vc就都能用了）
+		Vue.prototype.hello = ()=>{alert('你好啊')}
+	}
+}
+```
+
+第二步：使用插件
+
+main.js
+
+```js
+//引入Vue
+import Vue from 'vue'
+//引入App
+import App from './App.vue'
+//引入插件
+import plugins from './plugins'
+
+//应用（使用）插件，这里还可以进行传参
+Vue.use(plugins,1,2,3)
+//创建vm
+new Vue({
+	el:'#app',
+	render: h => h(App)
+})
+```
+
+
 
 ## 插槽
 
