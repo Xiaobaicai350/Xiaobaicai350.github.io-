@@ -3879,6 +3879,36 @@ mounted在页面渲染完成之后使用，也就是此时页面已完全取出V
 
 ![image-20230607123217772](../pic/image-20230607123217772.png)
 
+组件的自定义事件
+
+1. 一种组件间通信的方式，适用于：<strong style="color:red">子组件 ===> 父组件</strong>
+
+2. 使用场景：A是父组件，B是子组件，B想给A传数据，那么就要在A中给B绑定自定义事件（<span style="color:red">事件的回调在A中</span>）。
+
+3. 绑定自定义事件：
+
+    1. 第一种方式，在父组件中：```<Demo @atguigu="test"/>```  或 ```<Demo v-on:atguigu="test"/>```
+
+    2. 第二种方式，在父组件中：
+
+        ```js
+        <Demo ref="demo"/>
+        ......
+        mounted(){
+           this.$refs.xxx.$on('atguigu',this.test)
+        }
+        ```
+
+    3. 若想让自定义事件只能触发一次，可以使用```once```修饰符，或```$once```方法。
+
+4. 触发自定义事件：```this.$emit('atguigu',数据)```		
+
+5. 解绑自定义事件```this.$off('atguigu')```
+
+6. 组件上也可以绑定原生DOM事件，需要使用```native```修饰符。
+
+7. 注意：通过```this.$refs.xxx.$on('atguigu',回调)```绑定自定义事件时，回调<span style="color:red">要么配置在methods中</span>，<span style="color:red">要么用箭头函数</span>，否则this指向会出问题！
+
 ### 兄弟组件之间的数据共享
 
 在 vue2.x 中，兄弟组件之间数据共享的方案是 EventBus。
@@ -3890,6 +3920,464 @@ EventBus 的使用步骤
 ① 创建eventBus.js 模块，并向外共享一个 Vue 的实例对象
 ② 在数据发送方，调用bus.$emit('事件名称', 要发送的数据) 方法触发自定义事件
 ③ 在数据接收方，调用bus.$on('事件名称', 事件处理函数) 方法注册一个自定义事件
+
+
+
+### 全局事件总线
+
+这个玩意可以实现任意组件间的通信（GlobalEventBus）
+
+1. 一种组件间通信的方式，适用于<span style="color:red">任意组件间通信</span>。
+
+2. 安装全局事件总线：
+
+   ```js
+   new Vue({
+      ......
+      beforeCreate() {
+         Vue.prototype.$bus = this //安装全局事件总线，$bus就是当前应用的vm
+      },
+       ......
+   }) 
+   ```
+
+3. 使用事件总线：
+
+   1. 接收数据：A组件想接收数据，则在A组件中给$bus绑定自定义事件，事件的<span style="color:red">回调留在A组件自身。</span>
+
+      ```js
+      methods(){
+        demo(data){......}
+      }
+      ......
+      mounted() {
+        this.$bus.$on('xxxx',this.demo)
+      }
+      ```
+
+   2. 提供数据：```this.$bus.$emit('xxxx',数据)```
+
+4. 最好在beforeDestroy钩子中，用$off去解绑<span style="color:red">当前组件所用到的</span>事件。
+
+
+
+
+
+具体代码示例：
+
+main.js
+
+```js
+<template>
+  <div class="student">
+    <h2>学生姓名：{{ name }}</h2>
+    <h2>学生性别：{{ sex }}</h2>
+    <button @click="sendStudentName">把学生名给School组件</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Student",
+  data() {
+    return {
+      name: "张三",
+      sex: "男",
+    };
+  },
+  methods: {
+    sendStudentName() {
+      this.$bus.$emit("hello", this.name);
+    },
+  },
+};
+</script>
+
+<style lang="less" scoped>
+.student {
+  background-color: pink;
+  padding: 5px;
+  margin-top: 30px;
+}
+</style>
+
+```
+
+school.vue
+
+```vue
+<template>
+  <div class="school">
+    <h2>学校名称：{{ name }}</h2>
+    <h2>学校地址：{{ address }}</h2>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "School",
+  data() {
+    return {
+      name: "尚硅谷",
+      address: "北京",
+    };
+  },
+  //在数据初始化完成阶段，给$bus绑定自定义事件
+  mounted() {
+    this.$bus.$on("hello", (data) => {
+      console.log("我是School组件，收到了数据", data);
+    });
+  },
+    //在组件将要被销毁的时候需要把这个自定义事件解绑，正如我轻轻的来，轻轻的走，不带走一片云彩
+  beforeDestroy() {
+    this.$bus.$off("hello");
+  },
+};
+</script>
+
+<style scoped>
+.school {
+  background-color: skyblue;
+  padding: 5px;
+}
+</style>
+```
+
+student.vue
+
+```vue
+<template>
+  <div class="student">
+    <h2>学生姓名：{{ name }}</h2>
+    <h2>学生性别：{{ sex }}</h2>
+    <button @click="sendStudentName">把学生名给School组件</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Student",
+  data() {
+    return {
+      name: "张三",
+      sex: "男",
+    };
+  },
+  methods: {
+    sendStudentName() {
+      this.$bus.$emit("hello", this.name);
+    },
+  },
+};
+</script>
+
+<style lang="less" scoped>
+.student {
+  background-color: pink;
+  padding: 5px;
+  margin-top: 30px;
+}
+</style>
+```
+
+### 消息订阅与发布（pubsub）
+
+1.   一种组件间通信的方式，适用于<span style="color:red">任意组件间通信</span>。
+
+2. 使用步骤：
+
+   1. 安装pubsub：```npm i pubsub-js```
+
+   2. 引入: ```import pubsub from 'pubsub-js'```
+
+   3. 接收数据：A组件想接收数据，则在A组件中订阅消息，订阅的<span style="color:red">回调留在A组件自身。</span>
+
+      ```js
+      methods(){
+        demo(data){......}
+      }
+      ......
+      mounted() {
+        this.pid = pubsub.subscribe('xxx',this.demo) //订阅消息
+      }
+      ```
+
+   4. 提供数据：```pubsub.publish('xxx',数据)```
+
+   5. 最好在beforeDestroy钩子中，用```PubSub.unsubscribe(pid)```去<span style="color:red">取消订阅。</span>
+
+
+
+School.vue
+
+```vue
+<template>
+	<div class="school">
+		<h2>学校名称：{{name}}</h2>
+		<h2>学校地址：{{address}}</h2>
+	</div>
+</template>
+
+<script>
+	import pubsub from 'pubsub-js'
+	export default {
+		name:'School',
+		data() {
+			return {
+				name:'尚硅谷',
+				address:'北京',
+			}
+		},
+		mounted() {
+            //这里把pubid挂载到vc对象身上，但是我感觉这种方法不太优雅，因为这个组件可能有多个消息
+			this.pubId = pubsub.subscribe('hello',(msgName,data)=>{
+				console.log(this)//这里是vc对象，因为这个是箭头函数，并且是外部的api进行调用的，所以vc-》外部api-》这个函数，所以这个this就是vc对象
+			    console.log('有人发布了hello消息，hello消息的回调执行了',msgName,data)
+			})
+		},
+		beforeDestroy() {
+			//这里通过id进行解绑对象，很想定时器
+			pubsub.unsubscribe(this.pubId)
+		},
+	}
+</script>
+
+<style scoped>
+	.school{
+		background-color: skyblue;
+		padding: 5px;
+	}
+</style>
+```
+
+student.vue
+
+```vue
+<template>
+	<div class="student">
+		<h2>学生姓名：{{name}}</h2>
+		<h2>学生性别：{{sex}}</h2>
+		<button @click="sendStudentName">把学生名给School组件</button>
+	</div>
+</template>
+
+<script>
+	import pubsub from 'pubsub-js'
+	export default {
+		name:'Student',
+		data() {
+			return {
+				name:'张三',
+				sex:'男',
+			}
+		},
+		methods: {
+			sendStudentName(){
+                //这里写你要输入的消息
+				pubsub.publish('hello',666)
+			}
+		},
+	}
+</script>
+
+<style lang="less" scoped>
+	.student{
+		background-color: pink;
+		padding: 5px;
+		margin-top: 30px;
+	}
+</style>
+
+```
+
+
+
+## Vue封装的过度与动画
+
+1. 作用：在插入、更新或移除 DOM元素时，在合适的时候给元素添加样式类名。
+
+3. 写法：
+
+   - 元素在进入的时候会加三个class：
+  1. v-enter：进入的起点
+     2. v-enter-active：进入过程中
+     3. v-enter-to：进入的终点
+   - 元素在离开的时候会加三个class：
+     1. v-leave：离开的起点
+     2. v-leave-active：离开过程中
+     3. v-leave-to：离开的终点
+   - 不过需要注意的是，v-leave和v-enter这两个class只会存在一帧，就会被vue删除，因为已经达到使用样式的效果了
+   
+1. 使用```<transition>```包裹要过度的元素，并配置name属性：
+   
+   ```vue
+      <transition name="hello">
+         <h1 v-show="isShow">你好啊！</h1>
+      </transition>
+      ```
+   
+2. 备注：若有多个元素需要过度，则需要使用：```<transition-group>```，且每个元素都要指定```key```值。
+
+### 动画
+
+```vue
+<template>
+  <div>
+    <button @click="isShow = !isShow">显示/隐藏</button>
+    <!-- 这里添加一个appear属性是初始的时候需要加载一个enter动画 -->
+    <transition name="hello" appear>
+      <h1 v-show="isShow">你好啊！</h1>
+    </transition>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Test",
+  data() {
+    return {
+      isShow: true,
+    };
+  },
+};
+</script>
+
+<style scoped>
+h1 {
+  background-color: orange;
+}
+/* 
+	下面这两个样式的命名规则是，如果你上面的标签加了name属性，这里的名字就是 
+	name属性值-enter-active
+	name属性值-leave-active
+	*/
+.hello-enter-active {
+  animation: atguigu 0.5s linear;
+}
+
+.hello-leave-active {
+  animation: atguigu 0.5s linear reverse;
+}
+
+@keyframes atguigu {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0px);
+  }
+}
+</style>
+
+```
+
+### 过度
+
+利用过度也可以实现同样的效果
+
+```vue
+<template>
+  <div>
+    <button @click="isShow = !isShow">显示/隐藏</button>
+    <transition name="hello" appear>
+      <h1 v-show="isShow">尚硅谷！</h1>
+    </transition>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Test",
+  data() {
+    return {
+      isShow: true,
+    };
+  },
+};
+</script>
+
+<style scoped>
+h1 {
+  background-color: orange;
+}
+/* 进入的起点、离开的终点 */
+.hello-enter,
+.hello-leave-to {
+  transform: translateX(-100%);
+}
+/* 进入的终点、离开的起点 */
+.hello-enter-to,
+.hello-leave {
+  transform: translateX(0);
+}
+
+/* 给这进入和离开这两个阶段设置样式，离开花费0.5s，并且效果是匀速 */
+.hello-enter-active,
+.hello-leave-active {
+  transition: 0.5s linear;
+}
+</style>
+
+```
+
+### 引入第三方库完成过度和动画
+
+```vue
+<template>
+  <div>
+    <button @click="isShow = !isShow">显示/隐藏</button>
+    <!-- 引入第三方库，就不用我们自己写进入动画和出动画的效果了 直接在属性上配置就行 -->
+    <!-- enter-active-class 进入动画 -->
+    <!-- leave-active-class 离开动画 -->
+    <transition-group
+      appear
+      name="animate__animated animate__bounce"
+      enter-active-class="animate__swing"
+      leave-active-class="animate__backOutUp"
+    >
+      <h1 v-show="!isShow" key="1">你好啊！</h1>
+      <h1 v-show="isShow" key="2">尚硅谷！</h1>
+    </transition-group>
+  </div>
+</template>
+
+<script>
+import "animate.css";
+export default {
+  name: "Test",
+  data() {
+    return {
+      isShow: true,
+    };
+  },
+};
+</script>
+
+<style scoped>
+h1 {
+  background-color: orange;
+}
+</style>
+
+```
+
+
+
+## nextTick
+
+1. 语法：```this.$nextTick(回调函数)```
+2. 作用：在下一次 DOM 更新结束后执行其指定的回调。
+3. 什么时候用：当改变数据后，要基于更新后的新DOM进行某些操作时，要在nextTick所指定的回调函数中执行。
+
+比如说你要显示一个输入框并获取焦点，首先在函数里面你先把显示输入框改为true，这时候dom还没更新，你就调用focus是不好使的，所以这个api就是让渲染完dom才会执行这里面的语句
+
+![image-20230612213057105](../pic/image-20230612213057105.png)
+
+## 利用代理解决跨域问题
+
+[配置参考 | Vue CLI (vuejs.org)](https://cli.vuejs.org/zh/config/#devserver-proxy)
+
+![image-20230612222627015](../pic/image-20230612222627015.png)
 
 ## ref 引用
 
