@@ -4716,7 +4716,17 @@ new Vue({
 })
 ```
 
+## vue-resource
 
+注意，这个东西用的不是很多，了解即可
+
+这个玩意是对xhr的封装
+
+安装`npm i vue-resource`
+
+用法其实和axios一模一样，只是引入的方式有点不一样
+
+![image-20230613220701084](../pic/image-20230613220701084.png)
 
 ## 插槽
 
@@ -4797,6 +4807,581 @@ template这个标签，它是一个虚拟的标签，不会渲染到页面上，
 Prop作用域插槽对外提供的数据对象，可以使用解构赋值简化数据的接收过程。示例代码如下：
 
 ![image-20230607222731282](../pic/image-20230607222731282.png)
+
+## Vuex
+
+涉及到多组件共享数据（既读又写）的话，全局事件总线就显得有点麻烦了
+
+所以我们需要Vuex了
+
+![vuex](../pic/vuex.png)
+
+### 1.概念
+
+1. 专门在 Vue 中实现集中式状态（数据）管理的一个 Vue 插件，对 vue 应用中多个组件的共享状态进行集中式的管理（读/写），也是一种组件间通信的方式，且适用于任意组件间通信。
+
+2. Github 地址: https://github.com/vuejs/vuex
+
+​    这里需要注意的是
+
+- vue2中，要用vuex的3版本
+- vue3中，要用vuex的4版本
+
+### 2.什么时候使用 Vuex
+
+1. 多个组件依赖于同一状态
+
+2. 来自不同组件的行为需要变更同一状态
+
+![image-20230614112930743](../pic/image-20230614112930743.png)
+
+
+
+### 3.搭建vuex环境
+
+1. 创建文件：```src/store/index.js```
+
+   ```js
+   //引入Vue核心库
+   import Vue from 'vue'
+   //引入Vuex
+   import Vuex from 'vuex'
+   //应用Vuex插件
+   Vue.use(Vuex)
+   
+   //准备actions对象——响应组件中用户的动作
+   const actions = {}
+   //准备mutations对象——修改state中的数据
+   const mutations = {}
+   //准备state对象——保存具体的数据
+   const state = {}
+   
+   //创建并暴露store
+   export default new Vuex.Store({
+       //这里面是配置对象的内容
+      actions,
+      mutations,
+      state
+   })
+   ```
+
+2. 在```main.js```中创建vm时传入```store```配置项
+
+   ```js
+   ......
+   //引入store
+   import store from './store'
+   ......
+   
+   //创建vm
+   new Vue({
+      el:'#app',
+      render: h => h(App),
+      store
+   })
+   ```
+
+###    4.基本使用
+
+1. 初始化数据、配置```actions```、配置```mutations```，操作文件```store.js```
+
+   ```js
+   //引入Vue核心库
+   import Vue from 'vue'
+   //引入Vuex
+   import Vuex from 'vuex'
+   //引用Vuex
+   Vue.use(Vuex)
+   
+   const actions = {
+       //响应组件中加的动作
+       //这里面有两个参数，一个叫context，是一个ministore
+      jia(context,value){
+   		//注意这里是大写！！
+          context.commit('JIA',value)
+      },
+   }
+   
+   const mutations = {
+       //执行加
+      JIA(state,value){
+         // console.log('mutations中的JIA被调用了',state,value)
+         state.sum += value
+      }
+   }
+   
+   //初始化数据
+   const state = {
+      sum:0
+   }
+   
+   //创建并暴露store
+   export default new Vuex.Store({
+      actions,
+      mutations,
+      state,
+   })
+   ```
+
+2. 组件中读取vuex中的数据：```$store.state.sum```![image-20230614153442030](../pic/image-20230614153442030.png)
+
+3. 组件中修改vuex中的数据：```$store.dispatch('action中的方法名',数据)``` 或 ```$store.commit('mutations中的方法名',数据)```
+
+   >  备注：若没有网络请求或其他业务逻辑，组件中也可 以越过actions，即不写```dispatch```，直接编写```commit```
+   >
+   >  ![image-20230614154133839](../pic/image-20230614154133839.png)
+   >
+   >  比如下面的代码：
+   >
+   >  store/index.js
+   >
+   >  ```js
+   >  //该文件用于创建Vuex中最为核心的store
+   >  import Vue from 'vue'
+   >  //引入Vuex
+   >  import Vuex from 'vuex'
+   >  //应用Vuex插件
+   >  Vue.use(Vuex)
+   >  
+   >  //准备actions——用于响应组件中的动作
+   >  const actions = {
+   >  	/* jia(context,value){
+   >  		console.log('actions中的jia被调用了')
+   >  		context.commit('JIA',value)
+   >  	},
+   >  	jian(context,value){
+   >  		console.log('actions中的jian被调用了')
+   >  		context.commit('JIAN',value)
+   >  	}, */
+   >  	jiaOdd(context,value){
+   >  		console.log('actions中的jiaOdd被调用了')
+   >  		if(context.state.sum % 2){
+   >  			context.commit('JIA',value)
+   >  		}
+   >  	},
+   >  	jiaWait(context,value){
+   >  		console.log('actions中的jiaWait被调用了')
+   >  		setTimeout(()=>{
+   >  			context.commit('JIA',value)
+   >  		},500)
+   >  	}
+   >  }
+   >  //准备mutations——用于操作数据（state）
+   >  const mutations = {
+   >  	JIA(state,value){
+   >  		console.log('mutations中的JIA被调用了')
+   >  		state.sum += value
+   >  	},
+   >  	JIAN(state,value){
+   >  		console.log('mutations中的JIAN被调用了')
+   >  		state.sum -= value
+   >  	}
+   >  }
+   >  //准备state——用于存储数据
+   >  const state = {
+   >  	sum:0 //当前的和
+   >  }
+   >  
+   >  //创建并暴露store
+   >  export default new Vuex.Store({
+   >  	actions,
+   >  	mutations,
+   >  	state,
+   >  })
+   >  ```
+   >
+   >  count.vue
+   >
+   >  ```vue
+   >  <template>
+   >  	<div>
+   >  		<h1>当前求和为：{{$store.state.sum}}</h1>
+   >  		<select v-model.number="n">
+   >  			<option value="1">1</option>
+   >  			<option value="2">2</option>
+   >  			<option value="3">3</option>
+   >  		</select>
+   >  		<button @click="increment">+</button>
+   >  		<button @click="decrement">-</button>
+   >  		<button @click="incrementOdd">当前求和为奇数再加</button>
+   >  		<button @click="incrementWait">等一等再加</button>
+   >  	</div>
+   >  </template>
+   >  
+   >  <script>
+   >  	export default {
+   >  		name:'Count',
+   >  		data() {
+   >  			return {
+   >  				n:1, //用户选择的数字
+   >  			}
+   >  		},
+   >  		methods: {
+   >  			//这里直接跳过了服务员，直接到了后厨
+   >  			increment(){
+   >  				this.$store.commit('JIA',this.n)
+   >  			},
+   >  			decrement(){
+   >  				this.$store.commit('JIAN',this.n)
+   >  			},
+   >  			incrementOdd(){
+   >  				this.$store.dispatch('jiaOdd',this.n)
+   >  			},
+   >  			incrementWait(){
+   >  				this.$store.dispatch('jiaWait',this.n)
+   >  			},
+   >  		},
+   >  		mounted() {
+   >  			console.log('Count',this)
+   >  		},
+   >  	}
+   >  </script>
+   >  
+   >  <style lang="css">
+   >  	button{
+   >  		margin-left: 5px;
+   >  	}
+   >  </style>
+   >  
+   >  ```
+   >
+   >  
+
+### 5.getters的使用
+
+> 这个东西和计算属性的区别，就是计算属性只能在自己的单个组件里面使用，而getters配置的计算每一个组件都能使用，可以理解为就是vuex里面的计算属性
+
+1. 概念：当state中的数据需要经过加工后再使用时，可以使用getters加工。
+
+2. 在```store/index.js```中追加```getters```配置 
+
+   ```js
+   ......
+   
+   const getters = {
+      bigSum(state){
+         return state.sum * 10
+      }
+   }
+   
+   //创建并暴露store
+   export default new Vuex.Store({
+      ......
+      getters
+   })
+   ```
+
+3. 组件中读取数据：```$store.getters.bigSum```
+
+### 6.四个map方法的使用
+
+> 这个东西只是为了简化我们写变量的功夫
+
+1. <strong>mapState方法：</strong>用于帮助我们映射```state```中的数据为计算属性
+
+   ```js
+   computed: {
+       //借助mapState生成计算属性：sum、school、subject（对象写法）
+        ...mapState({sum:'sum',school:'school',subject:'subject'}),
+            
+       //借助mapState生成计算属性：sum、school、subject（数组写法）
+       ...mapState(['sum','school','subject']),
+   },
+   ```
+
+2. <strong>mapGetters方法：</strong>用于帮助我们映射```getters```中的数据为计算属性
+
+   ```js
+   computed: {
+       //借助mapGetters生成计算属性：bigSum（对象写法）
+       ...mapGetters({bigSum:'bigSum'}),
+   
+       //借助mapGetters生成计算属性：bigSum（数组写法）
+       ...mapGetters(['bigSum'])
+   },
+   ```
+
+```vue
+<template>
+	<div>
+		<h1>当前求和为：{{sum}}</h1>
+		<h3>当前求和放大10倍为：{{bigSum}}</h3>
+		<h3>我在{{school}}，学习{{subject}}</h3>
+		<select v-model.number="n">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+		</select>
+		<button @click="increment">+</button>
+		<button @click="decrement">-</button>
+		<button @click="incrementOdd">当前求和为奇数再加</button>
+		<button @click="incrementWait">等一等再加</button>
+	</div>
+</template>
+
+<script>
+	import {mapState,mapGetters} from 'vuex'
+	export default {
+		name:'Count',
+		data() {
+			return {
+				n:1, //用户选择的数字
+			}
+		},
+		computed:{
+			//靠程序员自己亲自去写计算属性
+			/* sum(){
+				return this.$store.state.sum
+			},
+			school(){
+				return this.$store.state.school
+			},
+			subject(){
+				return this.$store.state.subject
+			}, */
+
+			//借助mapState生成计算属性，从state中读取数据。（对象写法）
+			// ...mapState({he:'sum',xuexiao:'school',xueke:'subject'}),
+
+			//借助mapState生成计算属性，从state中读取数据。（数组写法）
+			...mapState(['sum','school','subject']),
+
+			/* ******************************************************************** */
+
+			/* bigSum(){
+				return this.$store.getters.bigSum
+			}, */
+
+			//借助mapGetters生成计算属性，从getters中读取数据。（对象写法）
+			// ...mapGetters({bigSum:'bigSum'})
+			
+			//借助mapGetters生成计算属性，从getters中读取数据。（数组写法）
+			...mapGetters(['bigSum'])
+
+		},
+		methods: {
+			increment(){
+				this.$store.commit('JIA',this.n)
+			},
+			decrement(){
+				this.$store.commit('JIAN',this.n)
+			},
+			incrementOdd(){
+				this.$store.dispatch('jiaOdd',this.n)
+			},
+			incrementWait(){
+				this.$store.dispatch('jiaWait',this.n)
+			},
+		},
+		mounted() {
+			const x = mapState({he:'sum',xuexiao:'school',xueke:'subject'})
+			console.log(x)
+		},
+	}
+</script>
+
+<style lang="css">
+	button{
+		margin-left: 5px;
+	}
+</style>
+
+```
+
+
+
+
+
+
+
+1. <strong>mapActions方法：</strong>用于帮助我们生成与```actions```对话的方法，即：包含```$store.dispatch(xxx)```的函数
+
+   ```js
+   methods:{
+       //靠mapActions生成：incrementOdd、incrementWait（对象形式）
+       ...mapActions({incrementOdd:'jiaOdd',incrementWait:'jiaWait'})
+   
+       //靠mapActions生成：incrementOdd、incrementWait（数组形式）
+       ...mapActions(['jiaOdd','jiaWait'])
+   }
+   ```
+
+2. <strong>mapMutations方法：</strong>用于帮助我们生成与```mutations```对话的方法，即：包含```$store.commit(xxx)```的函数
+
+   ```js
+   methods:{
+       //靠mapActions生成：increment、decrement（对象形式）
+       ...mapMutations({increment:'JIA',decrement:'JIAN'}),
+       
+       //靠mapMutations生成：JIA、JIAN（对象形式）
+       ...mapMutations(['JIA','JIAN']),
+   }
+   ```
+
+> 备注：mapActions与mapMutations使用时，若需要传递参数需要：在模板中绑定事件时传递好参数，否则参数是事件对象。
+
+具体使用的时候需要先引入  import {mapState} from 'vuex'
+
+```vue
+<template>
+	<div>
+		<h1>当前求和为：{{sum}}</h1>
+		<h3>当前求和放大10倍为：{{bigSum}}</h3>
+		<h3>我在{{school}}，学习{{subject}}</h3>
+		<select v-model.number="n">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+		</select>
+		<button @click="increment(n)">+</button>
+		<button @click="decrement(n)">-</button>
+		<button @click="incrementOdd(n)">当前求和为奇数再加</button>
+		<button @click="incrementWait(n)">等一等再加</button>
+	</div>
+</template>
+
+<script>
+	import {mapState,mapGetters,mapMutations,mapActions} from 'vuex'
+	export default {
+		name:'Count',
+		data() {
+			return {
+				n:1, //用户选择的数字
+			}
+		},
+		computed:{
+			//借助mapState生成计算属性，从state中读取数据。（对象写法）
+			// ...mapState({he:'sum',xuexiao:'school',xueke:'subject'}),
+
+			//借助mapState生成计算属性，从state中读取数据。（数组写法）
+			...mapState(['sum','school','subject']),
+
+			/* ******************************************************************** */
+
+			//借助mapGetters生成计算属性，从getters中读取数据。（对象写法）
+			// ...mapGetters({bigSum:'bigSum'})
+			
+			//借助mapGetters生成计算属性，从getters中读取数据。（数组写法）
+			...mapGetters(['bigSum'])
+
+		},
+		methods: {
+			//程序员亲自写方法
+			/* increment(){
+				this.$store.commit('JIA',this.n)
+			},
+			decrement(){
+				this.$store.commit('JIAN',this.n)
+			}, */
+
+			//借助mapMutations生成对应的方法，方法中会调用commit去联系mutations(对象写法)
+			...mapMutations({increment:'JIA',decrement:'JIAN'}),
+
+			//借助mapMutations生成对应的方法，方法中会调用commit去联系mutations(数组写法)
+			// ...mapMutations(['JIA','JIAN']),
+
+			/* ************************************************* */
+
+			//程序员亲自写方法
+			/* incrementOdd(){
+				this.$store.dispatch('jiaOdd',this.n)
+			},
+			incrementWait(){
+				this.$store.dispatch('jiaWait',this.n)
+			}, */
+
+			//借助mapActions生成对应的方法，方法中会调用dispatch去联系actions(对象写法)
+			...mapActions({incrementOdd:'jiaOdd',incrementWait:'jiaWait'})
+
+			//借助mapActions生成对应的方法，方法中会调用dispatch去联系actions(数组写法)
+			// ...mapActions(['jiaOdd','jiaWait'])
+		},
+		mounted() {
+			const x = mapState({he:'sum',xuexiao:'school',xueke:'subject'})
+			console.log(x)
+		},
+	}
+</script>
+
+<style lang="css">
+	button{
+		margin-left: 5px;
+	}
+</style>
+
+```
+
+
+
+### 7.模块化+命名空间
+
+1. 目的：让代码更好维护，让多种数据分类更加明确。
+
+2. 修改```store.js```  
+
+   ```javascript
+   const countAbout = {
+     namespaced:true,//开启命名空间
+     state:{x:1},
+     mutations: { ... },
+     actions: { ... },
+     getters: {
+       bigSum(state){
+          return state.sum * 10
+       }
+     }
+   }
+   
+   const personAbout = {
+     namespaced:true,//开启命名空间
+     state:{ ... },
+     mutations: { ... },
+     actions: { ... }
+   }
+   
+   const store = new Vuex.Store({
+     modules: {
+       countAbout,
+       personAbout
+     }
+   })
+   ```
+
+3. 开启命名空间后，组件中读取state数据：
+
+   ```js
+   //方式一：自己直接读取
+   this.$store.state.personAbout.list
+   //方式二：借助mapState读取：
+   ...mapState('countAbout',['sum','school','subject']),
+   ```
+
+4. 开启命名空间后，组件中读取getters数据：
+
+   ```js
+   //方式一：自己直接读取
+   this.$store.getters['personAbout/firstPersonName']
+   //方式二：借助mapGetters读取：
+   ...mapGetters('countAbout',['bigSum'])
+   ```
+
+5. 开启命名空间后，组件中调用dispatch
+
+   ```js
+   //方式一：自己直接dispatch
+   this.$store.dispatch('personAbout/addPersonWang',person)
+   //方式二：借助mapActions：
+   ...mapActions('countAbout',{incrementOdd:'jiaOdd',incrementWait:'jiaWait'})
+   ```
+
+6. 开启命名空间后，组件中调用commit
+
+   ```js
+   //方式一：自己直接commit
+   this.$store.commit('personAbout/ADD_PERSON',person)
+   //方式二：借助mapMutations：
+   ...mapMutations('countAbout',{increment:'JIA',decrement:'JIAN'}),
+   ```
 
 ## 自定义指令
 
