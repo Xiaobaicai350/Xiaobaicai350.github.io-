@@ -6418,210 +6418,6 @@ JavaScript 把异步任务又做了进一步的划分，异步任务又分为两
 
 正确的输出顺序是：156234789
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Vue引入第三方
 
 > awesome-vue，一些vue的第三方组件.
@@ -6662,287 +6458,7 @@ export default{
 </script>
 ```
 
-## Vue状态管理（Vuex）
 
-状态管理可以理解成：为了更方便的管理组件之间的数据交互，提供了一个**集中式**的管理方案，任何组件都可以按照指定的方式进行读取和改变数据![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681105090616-767adafd-28d2-4774-a425-74873ef012ec.png#averageHue=%23f1e9e7&clientId=u42739be6-37cf-4&from=paste&height=122&id=u235d6e02&originHeight=152&originWidth=179&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=27836&status=done&style=none&taskId=ua9f01e8b-2297-48dc-84c2-5e596e9bb5b&title=&width=143.2)
-
-
-项目结构：
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/27086425/1681108481969-c214bf30-eb61-4ba8-afed-489c84179f4c.png#averageHue=%23272829&clientId=u42739be6-37cf-4&from=paste&height=332&id=ue9b3d5b1&originHeight=415&originWidth=326&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=19748&status=done&style=none&taskId=u897c8753-2edf-45f1-ab17-54a8d96fad0&title=&width=260.8)
-**第一步：**
-安装vuex `npm install --save vuex`
-**第二步：**
-创建store目录，并且创建一个地方存放所有数据
-
-```javascript
-import {createStore} from "vuex"
-//vuex的核心作用就是帮我们管理组件之间的状态/数据
-const store =createStore({
-    //所有的数据都放在这里
-    state:{
-        counter:0
-    }
-})
-export default store;
-```
-
-**第三步：**
-在main.js中引入vuex
-
-```javascript
-import { createApp } from 'vue'
-import App from './App.vue'
-import './registerServiceWorker'
-//添加vuex
-import store from "./store"
-
-const app=createApp(App)
-//应用vuex
-app.use(store)
-app.config.globalProperties.$axios=axios
-app.mount('#app')
-```
-
-**第四步：**
-在主页面获取数据
-方法一：
-
-```vue
-<template>
-      <!-- 通过这种方式取到变量 -->
-      <h1>{{ $store.state.counter }}</h1>
-</template>
-
-
-<script>
-export default {
-}
-</script>
-```
-
-方法二：
-
-```vue
-<template>
-      <!-- 通过这种方式取到变量 -->
-      <h1>{{ counter }}</h1>
-</template>
-
-
-<script>
-import {mapState} from "vuex"
-export default {
-  //这个方法专门用来读取vuex的数据
-  computed:{
-    ...mapState(["counter"])
-  }
-}
-</script>
-```
-
-## Vue状态管理核心（Vuex）
-
-### getters的方法
-
-```javascript
-import {createStore} from "vuex"
-//vuex的核心作用就是帮我们管理组件之间的状态/数据
-const store =createStore({
-    //所有的数据都放在这里
-    state:{
-        counter:0
-    },
-    getters:{
-        getCounter(state){
-            return state.counter>0?state.counter:"小于等于0了的效果"
-        }
-    }
-})
-export default store;
-```
-
-他也有两种获取方法
-
-```vue
-<template>
-<!--   第一种方式 -->
-      <h1>{{$store.getters.getCounter}}</h1>
-<!--   第二种方式，需要导入mapGetters -->
-      <h1>{{getCounter}}</h1> 
-</template>
-<script>
-import {mapGetters} from "vuex"
-export default {
-  //这个方法专门用来读取vuex的数据
-  computed:{
-    ...mapGetters(["getCounter"])
-  }
-}
-</script>
-```
-
-### Mutation
-
-更改Vuex的store中的状态的唯一方法是提交mutation,vuex中的mutation非常类似于事件:每个mutation都有一个字符串的事件类型type和一个回调函数(handler)。这个回调函数就是我们实际进行状态更改的地方，并且它会接受state 作为第一个参数
-
-```javascript
-import {createStore} from "vuex"
-
-//vuex的核心作用就是帮我们管理组件之间的状态/数据
-const store =createStore({
-      //所有的数据都放在这里
-      state:{
-          counter:10
-      },
-      mutations:{
-          addCounter(state,num){
-              state.counter=state.counter+num;
-          }
-      }
-    }
-})
-
-
-export default store;
-```
-
-```vue
-<template>
-      <button @click="addClickHandler">+10</button>
-</template>
-
-
-<script>
-import {mapState,mapGetters} from "vuex"
-
-
-export default {
-  methods:{
-    addClickHandler(){
-      this.$store.commit("addCounter",10)
-    }
-  }
-}
-</script>
-```
-
-### Action
-
-```javascript
-import {createStore} from "vuex"
-import {axios} from "axios"
-
-//vuex的核心作用就是帮我们管理组件之间的状态/数据
-const store =createStore({
-    actions:{
-        asyncAddCounter({commit}){
-            axios.get("").then(res=>{
-                commit("addCounter",res.data[0])
-            })
-        }
-    }
-
-})
-
-
-export default store;
-```
-
-## Vue3新特性
-
-主要是组合API
-
-### ref和reactive
-
-```vue
-<template>
-  <div>
-      <h1>{{message}}</h1>
-    	<ul>
-      	<li v-for="(item,index) in names.list" :key="index">{{ item }}</li>
-    	</ul>
- </div>
-
-</template>
-
-
-<script>
-import { ref,reactive } from 'vue';
-export default {
-  setup(){
-    //用于基本数据
-    const message=ref("消息在此")
-    //用于复杂数据
-    const names=reactive({
-      list:["haohao","xth"]
-    })
-    //注意需要返回
-    return{
-      message,
-      names
-    }
-  }
-}
-</script>
-```
-
-### 在setup中定义函数
-
-```vue
-<template>
-  <div>
-    <h1>{{message}}</h1>
-    <button @click="function1">函数</button>
- </div>
-</template>
-
-
-<script>
-import { ref } from 'vue';
-export default {
-  setup(){
-    //用于基本数据
-    const message=ref("消息在此")
-    function function1(){
-      console.log("我是在setup里面定义的函数1")
-      //需要注意的是这种方式需要利用value属性修改！！
-      message.value="我是新的消息"
-    }
-    return{
-      message,
-      function1
-    }
-  }
-}
-</script>
-```
-
-## 引入Element-UI
-
-第一步：安装依赖`npm i element-ui -S`	`npm install element-plus --save`
-
-### 完整引用
-
-这种方式的特点就是文件大小会比较大
-
-在main.js中引入：
-
-```javascript
-import Vue from 'vue'
-import App from './App.vue'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-
-
-Vue.config.productionTip = false
-
-
-const app=new Vue({
-  render: h => h(App)
-})
-app.use(ElementPlus)
-app.$mount('#app')
-```
 
 # Vue3快速上手
 
@@ -7640,6 +7156,76 @@ Vue3
 
 - 自定义hook的优势: 复用代码, 让setup中的逻辑更清楚易懂。
 
+ 
+
+新建hooks文件夹
+
+hooks/usePoint.js
+
+```js
+import {reactive,onMounted,onBeforeUnmount} from 'vue'
+export default function (){
+	//实现鼠标“打点”相关的数据
+	let point = reactive({
+		x:0,
+		y:0
+	})
+
+	//实现鼠标“打点”相关的方法
+	function savePoint(event){
+		point.x = event.pageX
+		point.y = event.pageY
+		console.log(event.pageX,event.pageY)
+	}
+
+	//实现鼠标“打点”相关的生命周期钩子
+	onMounted(()=>{
+		window.addEventListener('click',savePoint)
+	})
+
+	onBeforeUnmount(()=>{
+		window.removeEventListener('click',savePoint)
+	})
+
+	return point
+}
+
+```
+
+引入这个hook，实现代码复用
+
+demo.vue
+
+> 引入这个hook就可以实现一个点击哪里就显示出坐标的功能，但是这个编写的是有些问题的，因为是在windows上绑定的。。。但是不影响
+>
+> 这样做的好处是，不用关心hook里面内部的细节，直接用就可以了
+
+```vue
+<template>
+	<h2>当前求和为：{{sum}}</h2>
+	<button @click="sum++">点我+1</button>
+	<hr>
+	<h2>当前点击时鼠标的坐标为：x：{{point.x}}，y：{{point.y}}</h2>
+</template>
+
+<script>
+	import {ref} from 'vue'
+	import usePoint from '../hooks/usePoint'
+	export default {
+		name: 'Demo',
+		setup(){
+			//数据
+			let sum = ref(0)
+			let point = usePoint()
+			
+
+			//这里也返回了point
+			return {sum,point}
+		}
+	}
+</script>
+```
+
 
 
 ## 10.toRef
@@ -7650,6 +7236,59 @@ Vue3
 
 
 - 扩展：```toRefs``` 与```toRef```功能一致，但可以批量创建多个 ref 对象，语法：```toRefs(person)```
+
+这个东西给我的感觉是Java里面的string类里面的intern方法。返回引用地址
+
+```vue
+<template>
+	<h4>{{person}}</h4>
+	<h2>姓名：{{name}}</h2>
+	<h2>年龄：{{age}}</h2>
+	<h2>薪资：{{job.j1.salary}}K</h2>
+	<button @click="name+='~'">修改姓名</button>
+	<button @click="age++">增长年龄</button>
+	<button @click="job.j1.salary++">涨薪</button>
+</template>
+
+<script>
+	import {ref,reactive,toRef,toRefs} from 'vue'
+	export default {
+		name: 'Demo',
+		setup(){
+			//数据
+			let person = reactive({
+				name:'张三',
+				age:18,
+				job:{
+					j1:{
+						salary:20
+					}
+				}
+			})
+
+			// const name1 = person.name
+			// console.log('%%%',name1)
+
+			// const name2 = toRef(person,'name')
+			// console.log('####',name2)
+
+			const x = toRefs(person)
+			console.log('******',x)
+
+			//返回一个对象（常用）
+			return {
+				person,
+				// name:toRef(person,'name'),
+				// age:toRef(person,'age'),
+				// salary:toRef(person.job.j1,'salary'),//这里可以直接用salary取
+				...toRefs(person)//解构了，但是这里只能拆第一层
+			}
+		}
+	}
+</script>
+```
+
+
 
 
 # 三、其它 Composition API
@@ -7663,11 +7302,113 @@ Vue3
   -  如果有一个对象数据，结构比较深, 但变化时只是外层属性变化 ===> shallowReactive。
   -  如果有一个对象数据，后续功能不会修改该对象中的属性，而是生新的对象来替换 ===> shallowRef。
 
+```vue
+<template>
+	<h4>当前的x.y值是：{{x.y}}</h4>
+	<button @click="x={y:888}">点我替换x</button>
+	<button @click="x.y++">点我x.y++</button>
+	<hr>
+	<h4>{{person}}</h4>
+	<h2>姓名：{{name}}</h2>
+	<h2>年龄：{{age}}</h2>
+	<h2>薪资：{{job.j1.salary}}K</h2>
+	<button @click="name+='~'">修改姓名</button>
+	<button @click="age++">增长年龄</button>
+	<button @click="job.j1.salary++">涨薪</button>
+</template>
+
+<script>
+	import {ref,reactive,toRef,toRefs,shallowReactive,shallowRef} from 'vue'
+	export default {
+		name: 'Demo',
+		setup(){
+			//数据
+			// let person = shallowReactive({ //只考虑第一层数据的响应式
+			let person = reactive({
+				name:'张三',
+				age:18,
+				job:{
+					j1:{
+						salary:20
+					}
+				}
+			})
+			let x = shallowRef({
+				y:0
+			})
+			console.log('******',x)
+
+			return {
+				x,
+				person,
+				...toRefs(person)
+			}
+		}
+	}
+</script>
+```
+
+
+
 ## 2.readonly 与 shallowReadonly
 
 - readonly: 让一个响应式数据变为只读的（深只读）。
 - shallowReadonly：让一个响应式数据变为只读的（浅只读）。
-- 应用场景: 不希望数据被修改时。
+- 应用场景: 不希望数据被修改时，而且有可能这个数据是别人传过来的。
+
+```vue
+<template>
+	<h4>当前求和为：{{sum}}</h4>
+	<button @click="sum++">点我++</button>
+	<hr>
+	<h2>姓名：{{name}}</h2>
+	<h2>年龄：{{age}}</h2>
+	<h2>薪资：{{job.j1.salary}}K</h2>
+	<button @click="name+='~'">修改姓名</button>
+	<button @click="age++">增长年龄</button>
+	<button @click="job.j1.salary++">涨薪</button>
+</template>
+
+<script>
+	import {ref,reactive,toRefs,readonly,shallowReadonly} from 'vue'
+	export default {
+		name: 'Demo',
+		setup(){
+			//数据
+			let sum = ref(0)
+			let person = reactive({
+				name:'张三',
+				age:18,
+				job:{
+					j1:{
+						salary:20
+					}
+				}
+			})
+
+            //这里面的person从现在开始就不能再改变了
+			person = readonly(person)
+            //浅层次的不能再改变，如果是深层次的还可以改
+			// person = shallowReadonly(person)
+            
+            
+               
+			// sum = readonly(sum)
+			// sum = shallowReadonly(sum)
+
+			//返回一个对象（常用）
+			return {
+				sum,
+				...toRefs(person)
+			}
+		}
+	}
+</script>
+
+
+```
+
+
 
 ## 3.toRaw 与 markRaw
 
@@ -7675,7 +7416,7 @@ Vue3
   - 作用：将一个由```reactive```生成的<strong style="color:orange">响应式对象</strong>转为<strong style="color:orange">普通对象</strong>。
   - 使用场景：用于读取响应式对象对应的普通对象，对这个普通对象的所有操作，不会引起页面更新。
 - markRaw：
-  - 作用：标记一个对象，使其永远不会再成为响应式对象。
+  - 作用：标记一个对象，使其永远不会再成为响应式对象（如果是直接在响应式对象上新增属性的话，默认的话也是响应式的，但是有些需求我们不想让他是响应式的）。
   - 应用场景:
     1. 有些值不应被设置为响应式的，例如复杂的第三方类库等。
     2. 当渲染具有不可变数据源的大列表时，跳过响应式转换可以提高性能。
@@ -7705,7 +7446,7 @@ Vue3
   				return customRef((track,trigger)=>{
   					return{
   						get(){
-  							track() //告诉Vue这个value值是需要被“追踪”的
+  							track() //告诉Vue这个value值是需要被“追踪”的（提前跟get说，这个value是有用的）
   							return value
   						},
   						set(newValue){
@@ -7731,9 +7472,11 @@ Vue3
 
 ## 5.provide 与 inject
 
-<img src="../pic/components_provide.png" style="width:300px" />
+提供数据和注入数据
 
-- 作用：实现<strong style="color:#DD5145">祖与后代组件间</strong>通信
+![image-20230618161027072](../pic/image-20230618161027072.png)
+
+- 作用：实现<strong style="color:#DD5145">祖与后代（跨级）组件间</strong>通信，但是其实子组件也可以用，不过我们一般用props来实现父子间传递数据
 
 - 套路：父组件有一个 `provide` 选项来提供数据，后代组件有一个 `inject` 选项来开始使用这些数据
 
@@ -7750,7 +7493,7 @@ Vue3
      }
      ```
 
-  2. 后代组件中：
+  2. 后代（孙及后代）组件中：
 
      ```js
      setup(props,context){
@@ -7767,6 +7510,44 @@ Vue3
 - isReactive: 检查一个对象是否是由 `reactive` 创建的响应式代理
 - isReadonly: 检查一个对象是否是由 `readonly` 创建的只读代理
 - isProxy: 检查一个对象是否是由 `reactive` 或者 `readonly` 方法创建的代理
+
+
+
+```vue
+<template>
+	<h3>我是App组件</h3>
+</template>
+
+<script>
+	import {ref, reactive,toRefs,readonly,isRef,isReactive,isReadonly,isProxy } from 'vue'
+	export default {
+		name:'App',
+		setup(){
+			let car = reactive({name:'奔驰',price:'40W'})
+			let sum = ref(0)
+			let car2 = readonly(car)
+
+			console.log(isRef(sum))//true
+			console.log(isReactive(car))//true
+			console.log(isReadonly(car2))//true
+			console.log(isProxy(car))//true
+			console.log(isProxy(sum))//false
+
+			
+			return {...toRefs(car)}
+		}
+	}
+</script>
+
+<style>
+	.app{
+		background-color: gray;
+		padding: 10px;
+	}
+</style>
+```
+
+
 
 # 四、Composition API 的优势
 
@@ -7796,9 +7577,15 @@ Vue3
 
 
 
+
+
 ## 2.Composition API 的优势
 
 我们可以更加优雅的组织我们的代码，函数。让相关功能的代码更加有序的组织在一起。
+
+同一个颜色意思就是我们在一个功能里面需要用到的东西
+
+主要的思想就是：相关的data、method、computed、watch组合成一个hook
 
 <div style="width:500px;height:340px;overflow:hidden;float:left">
     <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bc0be8211fc54b6c941c036791ba4efe~tplv-k3u1fbpfcp-watermark.image"style="height:360px"/>
@@ -7830,17 +7617,61 @@ Vue3
 
 ## 2.Teleport
 
+Teleport是传送的意思
+
 - 什么是Teleport？—— `Teleport` 是一种能够将我们的<strong style="color:#DD5145">组件html结构</strong>移动到指定位置的技术。
 
   ```vue
-  <teleport to="移动位置">
-  	<div v-if="isShow" class="mask">
-  		<div class="dialog">
-  			<h3>我是一个弹窗</h3>
-  			<button @click="isShow = false">关闭弹窗</button>
-  		</div>
-  	</div>
-  </teleport>
+  <template>
+    <div>
+      <button @click="isShow = true">点我弹个窗</button>
+      <!-- 这里的body的意思是移动到body标签里面 -->
+      <teleport to="body">
+        <div v-if="isShow" class="mask">
+          <div class="dialog">
+            <h3>我是一个弹窗</h3>
+            <h4>一些内容</h4>
+            <h4>一些内容</h4>
+            <h4>一些内容</h4>
+            <button @click="isShow = false">关闭弹窗</button>
+          </div>
+        </div>
+      </teleport>
+    </div>
+  </template>
+  
+  <script>
+  import { ref } from "vue";
+  export default {
+    name: "Dialog",
+    setup() {
+      let isShow = ref(false);
+      return { isShow };
+    },
+  };
+  </script>
+  
+  <style>
+  .mask {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 300px;
+    height: 300px;
+    background-color: green;
+  }
+  </style>
+  
   ```
 
 ## 3.Suspense
@@ -7873,6 +7704,80 @@ Vue3
     	</div>
     </template>
     ```
+
+总代码：
+
+App.vue
+
+```vue
+<template>
+	<div class="app">
+		<h3>我是App组件</h3>
+		<Suspense>
+			<template v-slot:default>
+				<Child/>
+			</template>
+			<template v-slot:fallback>
+				<h3>稍等，加载中...</h3>
+			</template>
+		</Suspense>
+	</div>
+</template>
+
+<script>
+	// import Child from './components/Child'//静态引入
+	import {defineAsyncComponent} from 'vue' 
+	const Child = defineAsyncComponent(()=>import('./components/Child')) //异步引入
+	export default {
+		name:'App',
+		components:{Child},
+	}
+</script>
+
+<style>
+	.app{
+		background-color: gray;
+		padding: 10px;
+	}
+</style>
+```
+
+Child.vue
+
+```vue
+<template>
+	<div class="child">
+		<h3>我是Child组件</h3>
+		{{sum}}
+	</div>
+</template>
+
+<script>
+	import {ref} from 'vue'
+	export default {
+		name:'Child',
+		async setup(){
+			let sum = ref(0)
+            <!--这里可以设置3秒后在进行渲染child这个组件-->
+			let p = new Promise((resolve,reject)=>{
+				setTimeout(()=>{
+					resolve({sum})
+				},3000)
+			})
+			return await p
+		}
+	}
+</script>
+
+<style>
+	.child{
+		background-color: skyblue;
+		padding: 10px;
+	}
+</style>
+```
+
+
 
 # 六、其他
 
@@ -7915,7 +7820,7 @@ Vue3
 
 - data选项应始终被声明为一个函数。
 
-- 过度类名的更改：
+- 过度动画类名的更改（其实就是改了个名字）：
 
   - Vue2.x写法
 
@@ -7946,7 +7851,7 @@ Vue3
 
 - <strong style="color:#DD5145">移除</strong>keyCode作为 v-on 的修饰符，同时也不再支持```config.keyCodes```
 
-- <strong style="color:#DD5145">移除</strong>```v-on.native```修饰符
+- <strong style="color:#DD5145">移除</strong>```v-on.native```修饰符（自定义事件上用的）
 
   - 父组件中绑定事件
 
@@ -7970,5 +7875,3 @@ Vue3
 - <strong style="color:#DD5145">移除</strong>过滤器（filter）
 
   > 过滤器虽然这看起来很方便，但它需要一个自定义语法，打破大括号内表达式是 “只是 JavaScript” 的假设，这不仅有学习成本，而且有实现成本！建议用方法调用或计算属性去替换过滤器。
-
-- ......
