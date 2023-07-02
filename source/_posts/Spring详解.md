@@ -42,22 +42,22 @@ Object u = applicationContext.getBean("u");
 1）BeanFactory是Spring的早期接口，称为Spring的Bean工厂，ApplicationContext是后期更高级接口，称之为Spring 容器；
 2）ApplicationContext在BeanFactory基础上对功能进行了扩展，例如：监听功能、国际化功能等。BeanFactory的API更偏向底层，ApplicationContext的API大多数是对这些底层API的封装；
 
-> ![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682162224300-c5a16a4a-0388-4b25-b4df-1c60818d6805.png#averageHue=%23302d2d&clientId=u157164f7-20a8-4&from=paste&height=412&id=ud20e4ff2&originHeight=515&originWidth=1544&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=43191&status=done&style=shadow&taskId=ubabaf8d5-4487-40ad-bb18-6efba4b0a98&title=&width=1235.2)
+> ![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682162224300-c5a16a4a-0388-4b25-b4df-1c60818d6805.png)
 
 3）Bean创建的主要逻辑和功能都被封装在BeanFactory中，ApplicationContext不仅继承了BeanFactory，而且ApplicationContext**内部还维护着BeanFactory的引用**，所以，ApplicationContext与BeanFactory既有继承关系，又有融合关系。
 
-> ![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682162469216-50411ba7-a7c5-4146-8807-39808646ab34.png#averageHue=%23393e42&clientId=u157164f7-20a8-4&from=paste&height=261&id=u2a6b5829&originHeight=326&originWidth=1452&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=60760&status=done&style=shadow&taskId=u986c4bbf-ab53-45f7-8ffa-93734cfe731&title=&width=1161.6)
+> ![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682162469216-50411ba7-a7c5-4146-8807-39808646ab34.png)
 
 4）Bean的初始化时机不同，原始BeanFactory是在首次调用getBean时（懒加载，用到哪个加载哪个）才进行Bean的创建，而ApplicationContext则是在**容器一创建（也就是在你启动你的项目的时候就会创建了）就将Bean都实例化并初始化好**。
 
-总的来说就是这个关系： ![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682162578695-e3f6539a-0734-4292-9608-9a055731f4d0.png#averageHue=%23d1d0cd&clientId=u157164f7-20a8-4&from=paste&height=486&id=u300a286b&originHeight=608&originWidth=930&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=108642&status=done&style=shadow&taskId=ue3137f73-c888-4559-8d9a-cf2898025d6&title=&width=744) **ApplicationContext是对BeanFactory的进一步封装，并且提供了更多的功能**
+总的来说就是这个关系： ![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682162578695-e3f6539a-0734-4292-9608-9a055731f4d0.png) **ApplicationContext是对BeanFactory的进一步封装，并且提供了更多的功能**
 
-ApplicationContext文件结构： ![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682163314023-cf785b9a-f526-4841-805a-55687c19496c.png#averageHue=%233e464d&clientId=u157164f7-20a8-4&from=paste&height=409&id=u5fad5055&originHeight=511&originWidth=936&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=105334&status=done&style=shadow&taskId=u48e99cba-43fa-4783-8bce-9a4ab99d69d&title=&width=748.8)
+ApplicationContext文件结构： ![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682163314023-cf785b9a-f526-4841-805a-55687c19496c.png)
 
 **如果闻到bean标签的scope属性的回答：** 当只是一个简单的spring项目时，只有singleton和prototype两种，一种是单例，用到的事件直接去singletonObjects（单例池）中去拿就可以了，另一种是每次创建都会创建一个新对象
-但是当在web-MVC环境下，就会多出两个： ![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682164663836-6bd27c9d-95d8-4786-a34b-d03e5c0ea066.png#averageHue=%23f5f0d0&clientId=u157164f7-20a8-4&from=paste&height=226&id=u144ca6f4&originHeight=282&originWidth=1371&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=234318&status=done&style=shadow&taskId=u3bf13c1c-183d-4474-8a73-cae71d3085e&title=&width=1096.8) 知道这个就行了
+但是当在web-MVC环境下，就会多出两个： ![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682164663836-6bd27c9d-95d8-4786-a34b-d03e5c0ea066.png) 知道这个就行了
 
-bean标签配置延迟加载： ![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682164734229-3fe98404-d551-4a01-b6aa-f037baea0b48.png#averageHue=%23e8eedc&clientId=u157164f7-20a8-4&from=paste&height=76&id=udf365fac&originHeight=95&originWidth=1668&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=84339&status=done&style=shadow&taskId=u7a2f0e4d-6851-4058-a5da-3d4dd29a7c5&title=&width=1334.4) 这个在使用ApplicationContext的情况下可以用。但是我们知道，如果使用BeanFactory（工厂）创建bean，都是延迟加载，也就是说如果使用BeanFactory，配置这个就没用了！！！！
+bean标签配置延迟加载： ![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682164734229-3fe98404-d551-4a01-b6aa-f037baea0b48.png) 这个在使用ApplicationContext的情况下可以用。但是我们知道，如果使用BeanFactory（工厂)创建bean，都是延迟加载，也就是说如果使用BeanFactory，配置这个就没用了！！！！
 
 ## Spring的实例化
 
@@ -188,23 +188,25 @@ Spring 的 xml 标签大体上分为两类，一种是默认标签，一种是�
 
 ### 默认标签
 
-![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682173595423-2809cfb1-6789-47d5-8f1e-07bcddc9191d.png#averageHue=%23bccbe1&clientId=u157164f7-20a8-4&from=paste&height=146&id=uab4d9086&originHeight=182&originWidth=965&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=47898&status=done&style=shadow&taskId=uc57d0401-a46b-48ce-bacf-7838b9e8b8b&title=&width=772)
+![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682173595423-2809cfb1-6789-47d5-8f1e-07bcddc9191d.png)
 
 ### 自定义标签
 
-![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682173621294-130979a8-ef2f-4df5-9234-d2f8a30420aa.png#averageHue=%23e9eeda&clientId=u157164f7-20a8-4&from=paste&height=254&id=u9196524b&originHeight=317&originWidth=969&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=91444&status=done&style=shadow&taskId=u7e18a23a-f507-4250-8b18-ebd4c516b86&title=&width=775.2)
+![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682173621294-130979a8-ef2f-4df5-9234-d2f8a30420aa.png)
 
 ## Spring的Bean实例实例化的基本流程
 
-先来看两个关键的类 ![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682180428467-b15d1ca4-a54a-4257-9ae3-58d0f1928bb3.png#averageHue=%23342e2d&clientId=u157164f7-20a8-4&from=paste&height=268&id=u0e49e6ca&originHeight=335&originWidth=1505&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=74779&status=done&style=shadow&taskId=u51708441-004c-443f-9dc9-edb3b15e63c&title=&width=1204) ![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682180496848-871105a7-bdf0-4d74-b54c-9db294f97542.png#averageHue=%23312d2c&clientId=u157164f7-20a8-4&from=paste&height=338&id=u1f05b10a&originHeight=422&originWidth=1437&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=84741&status=done&style=shadow&taskId=u137ac2d0-6f5c-46a7-a3f7-9eea593e0f8&title=&width=1149.6) ![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682180519482-a4e82e35-cda8-48f3-88b1-4b2acddc5f19.png#averageHue=%23312d2c&clientId=u157164f7-20a8-4&from=paste&height=338&id=u13e9ec44&originHeight=422&originWidth=1437&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=84741&status=done&style=shadow&taskId=u0dd8833d-df28-4829-ae9f-031e60471dd&title=&width=1149.6) ** Bean 实例化的基本流程 ：**
+先来看两个关键的类 ![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682180428467-b15d1ca4-a54a-4257-9ae3-58d0f1928bb3.png) ![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682180496848-871105a7-bdf0-4d74-b54c-9db294f97542.png) ![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682180519482-a4e82e35-cda8-48f3-88b1-4b2acddc5f19.png) ** Bean 实例化的基本流程 ：**
 Spring容器在进行初始化时，会将xml配置的的信息封装成一个个**BeanDefinition（一个bean标签对应一个BeanDefinition对象）**对象，所有的 BeanDefinition存储到一个名为**beanDefinitionMap**的Map集合中去。在容器初始化阶段，Spring框架对该Map进行遍历，使用**反射**创建Bean实例对象，创建好的Bean对象存储在一个名为**singletonObjects**的Map集合中，当调用getBean方法时则最终从**singletonObjects**中取出Bean实例对象返回 
-在容器的初始化阶段，Spring框架会取出beanDefinitionMap中的每个BeanDefinition信息，通过反射构造方法或调用指定的工厂方法 生成Bean实例对象，所以只要将BeanDefinition注册到beanDefinitionMap这个Map中，Spring就会进行对 应的Bean的实例化操作（也就是说我们可以进行手动添加！） 
+在容器的初始化阶段，Spring框架会取出beanDefinitionMap中的每个BeanDefinition信息，通过反射构造方法或调用指定的工厂方法 生成Bean实例对象，所以只要将BeanDefinition注册到beanDefinitionMap这个Map中，Spring就会进行对 应的Bean的实例化操作（也就是说我们可以进行手动添加！) 
 之后：
  beanDefinitionMap中的**单例的Bean实例的**BeanDefinition会被转化成对应的Bean实例对象，存储到单例池singletonObjects中去
 
 ### 总结流程
 
-**Bean 实例化的基本流程！！！** ⚫ 加载xml配置文件，解析获取配置中的每个（标签）的信息，封装成一个个的BeanDefinition对象;
+**Bean 实例化的基本流程！！！** 
+
+⚫ 加载xml配置文件，解析获取配置中的每个（标签）的信息，封装成一个个的BeanDefinition对象;
 ⚫ 将BeanDefinition存储在一个名为beanDefinitionMap的Map<String,BeanDefinition>中;
 ⚫ ApplicationContext底层遍历beanDefinitionMap，创建Bean实例对象;
 ⚫ 创建好的Bean实例对象，被存储到一个名为singletonObjects的Map<String,Object>中;
@@ -272,9 +274,9 @@ public void test7(){
 ```
 
 除此之外： Spring 还提供了一个BeanFactoryPostProcessor的子接口**BeanDefinitionRegistryPostProcessor**专门用于注册 BeanDefinition操作  
-![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682218625761-554db12e-5163-408e-a06e-cb66821a8d32.png#averageHue=%23e8eeda&clientId=u85d420bf-4e40-4&from=paste&height=237&id=u93afbae3&originHeight=296&originWidth=1069&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=83796&status=done&style=shadow&taskId=ue10e7f67-41d5-4108-b6bd-22119dc55f2&title=&width=855.2)
+![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682218625761-554db12e-5163-408e-a06e-cb66821a8d32.png)
 
-图示总结： ![imagepng](https://cdn.nlark.com/yuque/0/2023/png/27086425/1682221162767-383e42e3-b77b-4fa1-b179-1626cb9de125.png#averageHue=%23ede8e8&clientId=u85d420bf-4e40-4&from=paste&height=473&id=ud398ddc7&originHeight=591&originWidth=1388&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=142235&status=done&style=shadow&taskId=u41156032-c7bc-4702-9969-4fee0e4b709&title=&width=1110.4)
+图示总结： ![imagepng](https://raw.githubusercontent.com/Xiaobaicai350/picBed/master/xiaobaicai/1682221162767-383e42e3-b77b-4fa1-b179-1626cb9de125.png)
 
 ### BeanPostProcessor
 
