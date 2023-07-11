@@ -634,19 +634,19 @@ Symbol创建对象属性
 遍历器（Iterator）就是一种机制。它是一种接口，为各种不同的数据结构提供统一的访问机制。任何数据结构只要部署 Iterator 接口，就可以完成遍历操作。
 1) ES6 创造了一种新的遍历命令 for...of 循环，Iterator 接口主要供 for...of 消费
 2) 原生具备 iterator 接口的数据(可用 for of 遍历)
-  a) Array
-  b) Arguments
-  c) Set
-  d) Map
-  e) String
-  f) TypedArray
-  g) NodeList
+    a) Array
+    b) Arguments
+    c) Set
+    d) Map
+    e) String
+    f) TypedArray
+    g) NodeList
 3) 工作原理
-  a) 创建一个指针对象，指向当前数据结构的起始位置
-  b) 第一次调用对象的 next 方法，指针自动指向数据结构的第一个成员
-  c) 接下来不断调用 next 方法，指针一直往后移动，直到指向最后一个成员
-  d) 每调用 next 方法返回一个包含 value 和 done 属性的对象
-  注: 需要自定义遍历数据的时候，要想到迭代器。
+    a) 创建一个指针对象，指向当前数据结构的起始位置
+    b) 第一次调用对象的 next 方法，指针自动指向数据结构的第一个成员
+    c) 接下来不断调用 next 方法，指针一直往后移动，直到指向最后一个成员
+    d) 每调用 next 方法返回一个包含 value 和 done 属性的对象
+    注: 需要自定义遍历数据的时候，要想到迭代器。
 
 ```js
 <!DOCTYPE html>
@@ -1667,3 +1667,482 @@ ES6 之前的模块化规范有：
 ![image-20230704220220258](../pic/image-20230704220220258.png)
 
 # 第 3 章 ECMASript 7 新特性
+
+## 3.1.Array.prototype.includes
+
+Includes 方法用来检测数组中是否包含某个元素，返回布尔类型值
+
+## 3.2.指数操作符
+
+在 ES7 中引入指数运算符「**」，用来实现幂运算，功能与 Math.pow 结果相同
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ES7 新特性</title>
+</head>
+<body>
+    <script>
+        // includes   indexOf
+        // const mingzhu = ['西游记','红楼梦','三国演义','水浒传'];
+
+        //判断
+        // console.log(mingzhu.includes('西游记'));//true
+        // console.log(mingzhu.includes('金瓶梅'));//false
+
+        // **
+        console.log(2 ** 10);// 这个和下面的一样
+        console.log(Math.pow(2, 10));
+        
+    </script>
+</body>
+</html>
+```
+
+# 第 4 章 ECMASript 8 新特性
+
+## 4.1.async 和 await
+
+async 和 await 两种语法结合可以让异步代码像同步代码一样
+
+### 4.1.1.async 函数
+
+1. async 函数的返回值为 promise 对象，
+2. promise 对象的结果由 async 函数执行的返回值决定
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>async函数</title>
+</head>
+
+<body>
+    <script>
+        //async 函数
+        async function fn() {
+            // 返回一个字符串
+            // return '尚硅谷';
+            // 返回的结果不是一个 Promise 类型的对象, 返回的结果就是成功 Promise 对象
+            // return;
+            //抛出错误, 返回的结果是一个失败的 Promise
+            // throw new Error('出错啦!');
+            //返回的结果如果是一个 Promise 对象
+            return new Promise((resolve, reject) => {
+                resolve('成功的数据');
+                // reject("失败的错误");
+            });
+        }
+
+        const result = fn();
+
+        //调用 then 方法
+        result.then(value => {
+            console.log(value);//如果是执行的resolve方法，会执行这个方法
+        }, reason => {
+            console.warn(reason);
+        })
+    </script>
+</body>
+
+</html>
+```
+
+### 4.1.2.await 表达式
+
+1. await 必须写在 async 函数中，async可以没有await
+2. await 右侧的表达式一般为 promise 对象
+3. await 返回的是 promise 成功的值
+4. await 的 promise 失败了, 就会抛出异常, 需要通过 try...catch 捕获处理
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>await</title>
+</head>
+
+<body>
+    <script>
+        //创建 promise 对象
+        const p = new Promise((resolve, reject) => {
+            // resolve("用户数据");
+            reject("失败啦!");
+        })
+
+        // await 要放在 async 函数中.
+        async function main() {
+            try {
+                let result = await p;
+                //
+                console.log(result);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        //调用函数
+        main();
+    </script>
+</body>
+
+</html>
+```
+
+
+
+读取文件
+
+```js
+//1. 引入 fs 模块
+const fs = require("fs");
+
+//读取『为学』
+function readWeiXue() {
+    return new Promise((resolve, reject) => {
+        fs.readFile("./resources/为学.md", (err, data) => {
+            //如果失败
+            if (err) reject(err);
+            //如果成功
+            resolve(data);
+        })
+    })
+}
+
+function readChaYangShi() {
+    return new Promise((resolve, reject) => {
+        fs.readFile("./resources/插秧诗.md", (err, data) => {
+            //如果失败
+            if (err) reject(err);
+            //如果成功
+            resolve(data);
+        })
+    })
+}
+
+function readGuanShu() {
+    return new Promise((resolve, reject) => {
+        fs.readFile("./resources/观书有感.md", (err, data) => {
+            //如果失败
+            if (err) reject(err);
+            //如果成功
+            resolve(data);
+        })
+    })
+}
+
+//声明一个 async 函数
+async function main(){
+    //获取为学内容
+    let weixue = await readWeiXue();
+    //获取插秧诗内容
+    let chayang = await readChaYangShi();
+    // 获取观书有感
+    let guanshu = await readGuanShu();
+
+    console.log(weixue.toString());
+    console.log(chayang.toString());
+    console.log(guanshu.toString());
+}
+
+main();
+```
+
+
+
+
+
+ajax
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发送 AJAX 请求</title>
+</head>
+
+<body>
+    <script>
+        // 发送 AJAX 请求, 返回的结果是 Promise 对象
+        function sendAJAX(url) {
+            return new Promise((resolve, reject) => {
+                //1. 创建对象
+                const x = new XMLHttpRequest();
+
+                //2. 初始化
+                x.open('GET', url);
+
+                //3. 发送
+                x.send();
+
+                //4. 事件绑定
+                x.onreadystatechange = function () {
+                    if (x.readyState === 4) {
+                        if (x.status >= 200 && x.status < 300) {
+                            //成功啦
+                            resolve(x.response);
+                        } else {
+                            //如果失败
+                            reject(x.status);
+                        }
+                    }
+                }
+            })
+        }
+
+        //promise then 方法测试
+        // sendAJAX("https://api.apiopen.top/getJoke").then(value=>{
+        //     console.log(value);
+        // }, reason=>{})
+
+        // async 与 await 测试  axios
+        async function main() {
+            //发送 AJAX 请求
+            let result = await sendAJAX("https://api.apiopen.top/getJoke");
+            //再次测试
+            let tianqi = await sendAJAX('https://www.tianqiapi.com/api/?version=v1&city=%E5%8C%97%E4%BA%AC&appid=23941491&appsecret=TXoD5e8P')
+
+            console.log(tianqi);
+        }
+
+        main();
+
+    </script>
+</body>
+
+</html>
+```
+
+
+
+## 4.2.Object.values 和 Object.entries
+
+1. Object.values()方法返回一个给定对象的所有可枚举属性值的数组
+2. Object.entries()方法返回一个给定对象自身可遍历属性 [key,value] 的数组
+   4.3.Object.getOwnPropertyDescriptors
+   该方法返回指定对象所有自身属性的描述对象
+
+
+
+# 第 5 章 ECMASript 9 新特性
+
+## 5.1.Rest/Spread 属性
+
+Rest 参数与 spread 扩展运算符在 ES6 中已经引入，不过 ES6 中只针对于数组，在 ES9 中为对象提供了像数组一样的 rest 参数和扩展运算符
+
+```html
+ <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对象展开</title>
+</head>
+
+<body>
+    <!-- 
+        Rest 参数与 spread 扩展运算符在 ES6 中已经引入，不过 ES6 中只针对于数组，
+        在 ES9 中为对象提供了像数组一样的 rest 参数和扩展运算符
+     -->
+    <script>
+        //rest 参数
+        function connect({host, port, ...user}){
+            console.log(host);
+            console.log(port);
+            console.log(user);
+        }
+
+        connect({
+            host: '127.0.0.1',
+            port: 3306,
+            username: 'root',
+            password: 'root',
+            type: 'master'
+        });
+
+
+        //对象合并
+        const skillOne = {
+            q: '天音波'
+        }
+
+        const skillTwo = {
+            w: '金钟罩'
+        }
+
+        const skillThree = {
+            e: '天雷破'
+        }
+        const skillFour = {
+            r: '猛龙摆尾'
+        }
+
+        const mangseng = {...skillOne, ...skillTwo, ...skillThree, ...skillFour};
+
+        console.log(mangseng)//这里做了一个对象的合并
+
+
+
+    </script>
+
+</body>
+
+</html>
+```
+
+
+
+## 5.2.正则表达式命名捕获组
+
+ES9 允许命名捕获组使用符号`『?<name>』`,这样获取捕获结果可读性更强
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正则扩展-反向断言</title>
+</head>
+<body>
+    <script>
+        //声明字符串
+        let str = 'JS5211314你知道么555啦啦啦';
+        //正向断言 根据后面的内容进行获取
+        const reg = /\d+(?=啦)/;//获取啦前面的数字
+        const result = reg.exec(str);
+
+        //反向断言 根据前面的内容进行获取
+        const reg = /(?<=么)\d+/;//获取么后面的数字
+        const result = reg.exec(str);
+        console.log(result);
+    </script>
+</body>
+</html>
+```
+
+# 第 6 章 ECMASript 10 新特性
+
+## 6.1.Object.fromEntries
+
+```js
+<script>
+    //二维数组
+    // const result = Object.fromEntries([
+    //     ['name','尚硅谷'],
+    //     ['xueke', 'Java,大数据,前端,云计算']
+    // ]);
+
+    //Map
+    // const m = new Map();
+    // m.set('name','ATGUIGU');
+    // const result = Object.fromEntries(m);
+
+    //Object.entries ES8
+    const arr = Object.entries({
+        name: "尚硅谷"
+    })
+console.log(arr);
+</script>
+```
+
+
+
+## 6.2.trimStart 和 trimEnd
+
+```js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>trimStart 与 trimEnd</title>
+</head>
+<body>
+    <script>    
+        // trim
+        let str = '   iloveyou   ';
+
+        console.log(str);
+        console.log(str.trimStart());
+        console.log(str.trimEnd());
+    </script>
+</body>
+</html>
+```
+
+## 6.3.Array.prototype.flat 与 flatMap
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flat 与 flatMap</title>
+</head>
+<body>
+    <script>
+        //flat 平
+        //将多维数组转化为低位数组
+        // const arr = [1,2,3,4,[5,6]];
+        // const arr = [1,2,3,4,[5,6,[7,8,9]]];
+        //参数为深度 是一个数字
+        // console.log(arr.flat(2));  
+
+        //flatMap
+        const arr = [1,2,3,4];
+        const result = arr.flatMap(item => [item * 10]);
+        console.log(result);
+    </script>
+</body>
+</html>
+```
+
+## 6.4.Symbol.prototype.description
+
+```js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symbol.prototype.description</title>
+</head>
+<body>
+    <script>
+        //创建 Symbol
+        let s = Symbol('尚硅谷');
+
+        console.log(s.description);//尚硅谷
+    </script>
+</body>
+
+</html>
+```
+
+# 第 7 章 ECMASript 11 新特性
+
+## 7.1.String.prototype.matchAll
+
+## 7.2.类的私有属性
+
+## 7.3.Promise.allSettled
+
+## 7.4.可选链操作符
+
+## 7.5.动态 import 导入
+
+## 7.6.globalThis 对象
